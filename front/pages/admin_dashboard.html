@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Style général du body */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1f1c2c, #928dab);
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Conteneur principal de la page */
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+            width: calc(100% - 250px);
+            transition: margin-left 0.3s ease;
+            overflow-y: auto;  /* Permet de défiler si le contenu est trop grand */
+        }
+
+        /* Header */
+        header {
+            background-color: #343a40;
+            padding: 10px 20px;
+        }
+
+        header a {
+            color: #fff;
+            font-size: 18px;
+            margin-right: 20px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        header a:hover {
+            color: #ff6b6b;
+        }
+
+        /* Style des cartes pour les statistiques */
+        .card {
+            text-align: center;
+            animation: slideIn 2s ease-in-out;
+        }
+
+        .card-body h5 {
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Bouton personnalisé */
+        .btn-custom {
+            background: linear-gradient(135deg, #ff3d3d, #ff6b6b);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            font-size: 16px;
+            box-shadow: 0 4px 10px rgba(255, 50, 50, 0.5);
+        }
+
+        .btn-custom:hover {
+            background: linear-gradient(135deg, #ff6b6b, #ff3d3d);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 50, 50, 0.7);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            /* Fusionne les bordures des cellules */
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            /* Bordure légère sous chaque ligne */
+        }
+
+        th {
+            background-color: #f4f4f4;
+            /* Fond gris clair pour l'en-tête */
+            color: #333;
+            /* Texte noir pour l'en-tête */
+            font-weight: bold;
+        }
+
+        td {
+            background-color: #fff;
+            /* Fond blanc pour les données */
+            color: #555;
+            /* Couleur de texte plus sombre pour les données */
+            font-size: 16px;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+            /* Survol léger pour chaque ligne */
+            cursor: pointer;
+            /* Le curseur devient une main quand on survole */
+        }
+
+        .product-row td {
+            transition: background-color 0.3s;
+            /* Animation pour le changement de couleur */
+        }
+
+        .product-row:hover td {
+            background-color: #f9f9f9;
+            /* Fond encore plus clair lors du survol */
+        }
+    </style>
+</head>
+<body>
+    <header id="header">
+        <a href="products.html">Produits</a>
+        <a href="magasin.html">Magasins</a>
+        <a href="register.html">Utilisateurs</a>
+        <a href="logout.html" style="float: right;">Déconnexion</a>
+        <a href="reception.html">Receptions</a>
+    </header>
+
+    <div class="container mt-4">
+        <h1 class="text-center mb-4">Tableau de Bord Administrateur</h1>
+
+        <!-- Encadrés Statistiques -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Gains</h5>
+                        <h2 id="gains">€ 12,450</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-warning text-dark">
+                    <div class="card-body">
+                        <h5 class="card-title">Achats</h5>
+                        <h2 id="achats">€ 8,200</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Total</h5>
+                        <h2 id="total">€ 20,650</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Graphique -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Évolution des ventes et achats</h5>
+                <canvas id="salesChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Tableaux Top Ventes / Flop Produits -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Top Ventes Produits</h5>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Produit</th>
+                                    <th>Quantité Vendue</th>
+                                </tr>
+                            </thead>
+                            <tbody id="topVentes">
+                                <tr><td>Produit A</td><td>120</td></tr>
+                                <tr><td>Produit B</td><td>98</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Top Flop Produits</h5>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Produit</th>
+                                    <th>Quantité Vendue</th>
+                                </tr>
+                            </thead>
+                            <tbody id="topFlop">
+                                <tr><td>Produit X</td><td>5</td></tr>
+                                <tr><td>Produit Y</td><td>12</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Données du graphique
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'],
+                datasets: [
+                    {
+                        label: 'Gains',
+                        data: [4000, 5000, 6000, 6500, 7000, 7450],
+                        backgroundColor: 'rgba(40, 167, 69, 0.5)'
+                    },
+                    {
+                        label: 'Achats',
+                        data: [3000, 4000, 5000, 5200, 6000, 6200],
+                        backgroundColor: 'rgba(255, 193, 7, 0.5)'
+                    }
+                ]
+            }
+        });
+    </script>
+</body>
+</html>

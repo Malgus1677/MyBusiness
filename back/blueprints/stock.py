@@ -40,3 +40,42 @@ def delete_stock(id):
     db.session.delete(s)
     db.session.commit()
     return jsonify({'message': 'Stock deleted successfully'})
+
+@app.route('/api/stock', methods=['POST'])
+@jwt_required()  # Sécurisez la route avec l'authentification JWT
+def add_stock():
+    try:
+        # Récupérer les données envoyées dans la requête
+        data = request.get_json()
+
+        magasin_id = data.get('store_id')
+        product_id = data.get('product_id')
+        quantity = data.get('quantity')
+
+        # Valider les données
+        if not magasin_id or not product_id or not quantity:
+            return jsonify({"message": "Tous les champs sont requis."}), 400
+
+        # Vérifier si le magasin existe
+        magasin = Magasin.query.get(magasin_id)
+        if not magasin:
+            return jsonify({"message": "Le magasin spécifié n'existe pas."}), 404
+
+        # Vérifier si le produit existe
+        product = Product.query.get(product_id)
+        if not product:
+            return jsonify({"message": "Le produit spécifié n'existe pas."}), 404
+
+        # Créer un nouvel enregistrement de stock
+        stock_item = Stock(magasin_id=magasin_id, product_id=product_id, quantite=quantity)
+
+        # Ajouter et committer dans la base de données
+        db.session.add(stock_item)
+        db.session.commit()
+
+        return jsonify({"message": "Réception de stock ajoutée avec succès."}), 201
+
+    except Exception as e:
+        # En cas d'erreur, retourner le message d'erreur
+        db.session.rollback()
+        return jsonify({"message": f"Erreur lors de l'ajout du stock : {str(e)}"}), 500

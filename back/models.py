@@ -14,7 +14,9 @@ class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     nom = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(100), unique=True, nullable=False)
+    prenom = db.Column(db.String(100), nullable=False)
+    password = db.Column(db.String(100), nullable=False)
+    username = db.Column(db.String(100), unique=True, nullable=False)
     role = db.Column(db.String(20), nullable=False)  # ex. 'admin', 'manager', 'employe'
     magasin_id = db.Column(db.Integer, db.ForeignKey('magasins.id'), nullable=True)
     magasin = db.relationship('Magasin', backref='users')
@@ -23,7 +25,6 @@ class Product(db.Model):
     __tablename__ = 'products'
     id = db.Column(db.Integer, primary_key=True)
     nom = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.String(200))
     # Prix d'achat du produit
     prix = db.Column(db.Float, nullable=False)
     # Nombre d'unités par carton (ex. 12 unités par carton)

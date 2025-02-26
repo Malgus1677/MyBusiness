@@ -5,3 +5,4 @@ Flask-MySQL
 Flask-JWT-Extended
 Flask-Migrate
 waitress
+bcrypt

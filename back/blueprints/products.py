@@ -10,13 +10,12 @@ def get_products():
     return jsonify([{
         'id': p.id,
         'nom': p.nom,
-        'description': p.description,
         'prix': p.prix,
         'prix_de_vente': p.prix_de_vente,  # Appel de la méthode du modèle
         'unites_par_carton': p.unites_par_carton
     } for p in products])
 
-@products_bp.route('/', methods=['POST'])
+@products_bp.route('/search', methods=['POST'])
 def search_products():
     data = request.get_json()
     products = Product.query.filter(Product.nom.like(f'%{data["nom"]}%')).all()
@@ -43,7 +42,6 @@ def update_product(id):
     p = Product.query.get_or_404(id)
     data = request.get_json()
     p.nom = data.get('nom', p.nom)
-    p.description = data.get('description', p.description)
     p.prix = data.get('prix', p.prix)
     p.unites_par_carton = data.get('unites_par_carton', p.unites_par_carton)
     db.session.commit()
@@ -56,14 +54,12 @@ def delete_product(id):
     db.session.commit()
     return jsonify({'message': 'Product deleted successfully'})
 
-@products_bp.route('/', methods=['POST'])
+@products_bp.route('/add', methods=['POST'])
 def add_product():
     data = request.get_json()
     p = Product(
         nom=data['nom'],
-        description=data['description'],
         prix=data['prix'],
-        prix_de_vente=data['prix_de_vente'],
         unites_par_carton=data['unites_par_carton']
     )
 

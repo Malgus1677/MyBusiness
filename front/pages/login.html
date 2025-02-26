@@ -1,47 +1,207 @@
-<!--
-  This example requires updating your template:
+<!DOCTYPE html>
+<html lang="fr">
 
-  ```
-  <html class="h-full bg-white">
-  <body class="h-full">
-  ```
--->
-<div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-    <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-      <img class="mx-auto h-10 w-auto" src="https://tailwindui.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600" alt="Your Company">
-      <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">Sign in to your account</h2>
-    </div>
-  
-    <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-      <form class="space-y-6" action="#" method="POST">
-        <div>
-          <label for="email" class="block text-sm/6 font-medium text-gray-900">Email address</label>
-          <div class="mt-2">
-            <input type="email" name="email" id="email" autocomplete="email" required class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
-          </div>
-        </div>
-  
-        <div>
-          <div class="flex items-center justify-between">
-            <label for="password" class="block text-sm/6 font-medium text-gray-900">Password</label>
-            <div class="text-sm">
-              <a href="#" class="font-semibold text-indigo-600 hover:text-indigo-500">Forgot password?</a>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        /* Arrière-plan animé */
+        body {
+            background: linear-gradient(135deg, #1f1c2c, #928dab);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+        }
+
+        /* Effet d'étoiles animées */
+        body::before {
+            content: "";
+            position: absolute;
+            width: 200vw;
+            height: 200vh;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1%, transparent 5%);
+            animation: moveStars 60s linear infinite;
+        }
+
+        @keyframes moveStars {
+            from {
+                transform: translate(-50%, -50%);
+            }
+
+            to {
+                transform: translate(50%, 50%);
+            }
+        }
+
+        /* Conteneur principal */
+        .auth-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(15px);
+            padding: 40px;
+            width: 380px;
+            text-align: center;
+            color: white;
+            position: relative;
+            z-index: 1;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .auth-header {
+            font-size: 26px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        /* Champs de saisie stylisés */
+        .form-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: white;
+            padding: 12px 15px 12px 45px;
+            border-radius: 10px;
+            width: 100%;
+            transition: 0.3s;
+            font-size: 16px;
+        }
+
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.25);
+            outline: none;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Icônes intégrées dans les champs */
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Bouton stylisé */
+        .btn-custom {
+            background: linear-gradient(135deg, #ff3d3d, #ff6b6b);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            font-size: 16px;
+            box-shadow: 0 4px 10px rgba(255, 50, 50, 0.5);
+        }
+
+        .btn-custom:hover {
+            background: linear-gradient(135deg, #ff6b6b, #ff3d3d);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 50, 50, 0.7);
+        }
+
+        /* Lien stylisé */
+        .text-center a {
+            color: #ff3d3d;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .text-center a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="auth-container">
+        <h2 class="auth-header">Connexion</h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <i class="fas fa-envelope input-icon"></i>
+                <input type="text" class="form-control" id="username" placeholder="Nom d'utilisateur" required>
             </div>
-          </div>
-          <div class="mt-2">
-            <input type="password" name="password" id="password" autocomplete="current-password" required class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
-          </div>
+            <div class="form-group">
+                <i class="fas fa-lock input-icon"></i>
+                <input type="password" class="form-control" id="password" placeholder="Mot de passe" required>
+            </div>
+            <button type="submit" class="btn btn-custom">Se connecter</button>
+        </form>
+        <div class="text-center mt-3">
+            <p>Pas encore de compte ? <a href="register.html">Créer un compte</a></p>
         </div>
-  
-        <div>
-          <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Sign in</button>
-        </div>
-      </form>
-  
-      <p class="mt-10 text-center text-sm/6 text-gray-500">
-        Not a member?
-        <a href="#" class="font-semibold text-indigo-600 hover:text-indigo-500">Start a 14 day free trial</a>
-      </p>
     </div>
-  </div>
-  
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            const response = await fetch('http://localhost:5000/users/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+
+            const data = await response.json();
+            console.log('data',data);
+
+            if (response.ok) {
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('role', data.role);
+                localStorage.setItem('username', username);
+                localStorage.setItem('magasin', data.magasin_id);
+
+                console.log('role',data.role);
+                switch (data.role) {
+                    case 'admin':
+                        window.location.href = 'admin_dashboard.html';
+                        break;
+                    case 'manager':
+                        window.location.href = 'manager_dashboard.html';
+                        break;
+                    case 'employee':
+                        window.location.href = 'employee_dashboard.html';
+                        break;
+                    default:
+                        alert("Rôle inconnu !");
+                }
+            } else {
+                alert(data.error || "Échec de la connexion !");
+            }
+        });
+    </script>
+
+</body>
+
+</html>

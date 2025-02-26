@@ -1,0 +1,381 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter un produit</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Styles similaires à ceux de votre formulaire d'inscription */
+        body {
+            background: linear-gradient(135deg, #1f1c2c, #928dab);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .auth-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(15px);
+            padding: 40px;
+            width: 380px;
+            text-align: center;
+            color: white;
+        }
+
+        .auth-header {
+            font-size: 26px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: white;
+            padding: 12px 15px 12px 45px;
+            border-radius: 10px;
+            width: 100%;
+        }
+
+        .btn-custom {
+            background: linear-gradient(135deg, #ff3d3d, #ff6b6b);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        /* Styles pour le tableau */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            /* Fusionne les bordures des cellules */
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            /* Bordure légère sous chaque ligne */
+        }
+
+        th {
+            background-color: #f4f4f4;
+            /* Fond gris clair pour l'en-tête */
+            color: #333;
+            /* Texte noir pour l'en-tête */
+            font-weight: bold;
+        }
+
+        td {
+            background-color: #fff;
+            /* Fond blanc pour les données */
+            color: #555;
+            /* Couleur de texte plus sombre pour les données */
+            font-size: 16px;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+            /* Survol léger pour chaque ligne */
+            cursor: pointer;
+            /* Le curseur devient une main quand on survole */
+        }
+
+        .product-row td {
+            transition: background-color 0.3s;
+            /* Animation pour le changement de couleur */
+        }
+
+        .product-row:hover td {
+            background-color: #f9f9f9;
+            /* Fond encore plus clair lors du survol */
+        }
+
+        /* Header */
+        header {
+            background-color: #343a40;
+            padding: 10px 20px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            /* S'assure que le header est au-dessus des autres éléments */
+        }
+
+
+        header a {
+            color: #fff;
+            font-size: 18px;
+            margin-right: 20px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        header a:hover {
+            color: #ff6b6b;
+        }
+
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-100px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header id="header">
+        <a href="products.html">Produits</a>
+        <a href="magasin.html">Magasins</a>
+        <a href="register.html">Utilisateurs</a>
+        <a href="logout.html" style="float: right;">Déconnexion</a>
+    </header>
+    <div class="container">
+        <div class="auth-container">
+            <h2 class="auth-header">Ajouter un produit</h2>
+            <form id="productForm">
+                <div class="form-group mb-3">
+                    <label for="nom">Nom du produit</label>
+                    <input type="text" class="form-control" id="nom" placeholder="Entrez le nom du produit" required>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="prix">Prix d'achat</label>
+                    <input type="number" class="form-control" id="prix" placeholder="Entrez le prix d'achat" step="0.01"
+                        required>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="unites_par_carton">Nombre d'unités par carton</label>
+                    <input type="number" class="form-control" id="unites_par_carton"
+                        placeholder="Entrez le nombre d'unités par carton" required>
+                </div>
+                <button type="submit" class="btn btn-custom w-100">Ajouter le produit</button>
+            </form>
+        </div>
+
+        <!-- Tableau pour afficher les produits -->
+        <div class="auth-container" style="margin-top: 40px;">
+            <h2 class="auth-header">Liste des produits</h2>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nom</th>
+                        <th>Prix d'achat</th>
+                        <th>Unité par carton</th>
+                    </tr>
+                </thead>
+                <tbody id="productTableBody">
+                    <!-- Les produits seront ajoutés ici dynamiquement -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('productForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Empêche le rechargement de la page
+
+            // Récupération des valeurs du formulaire
+            var nom = document.getElementById('nom').value;
+            var prix = parseFloat(document.getElementById('prix').value);
+            var unites_par_carton = parseInt(document.getElementById('unites_par_carton').value);
+
+            // Objet JSON à envoyer au serveur
+            var formData = {
+                nom: nom,
+                prix: prix,
+                unites_par_carton: unites_par_carton
+            };
+
+            // Requête fetch pour ajouter le produit
+            fetch('http://localhost:5000/products/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === 'Produit ajouté avec succès') {
+                        alert('Produit ajouté avec succès');
+                        // Réinitialiser le formulaire après ajout
+                        document.getElementById('productForm').reset();
+                        // Recharger la liste des produits
+                        loadProducts();
+                    } else {
+                        alert('Erreur : ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur de soumission du formulaire :', error);
+                    alert('Une erreur est survenue.');
+                });
+        });
+
+        // Fonction pour charger les produits
+        function loadProducts() {
+            fetch('http://localhost:5000/products', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    var tableBody = document.getElementById('productTableBody');
+                    tableBody.innerHTML = ''; // Efface les anciens produits
+
+                    if (data.length === 0) {
+                        // Afficher un message stylisé si aucun produit
+                        tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="text-center" style="color: #ff6b6b; font-size: 18px; font-weight: bold;">
+                            Aucun produit trouvé.
+                        </td>
+                    </tr>
+                `;
+                    } else {
+                        // Afficher les produits si disponibles
+                        data.forEach((product, index) => {
+                            var row = document.createElement('tr');
+                            row.innerHTML = `
+        <td>${index + 1}</td>
+        <td>${product.nom}</td>
+        <td>${product.prix}</td>
+        <td>${product.unites_par_carton}</td>
+        <td>
+            <button class="btn btn-edit" onclick="editProduct(${product.id})">Éditer</button>
+            <button class="btn btn-delete" onclick="deleteProduct(${product.id})">Supprimer</button>
+        </td>
+    `;
+                            row.classList.add('product-row');  // Ajout d'une classe pour styliser chaque ligne
+                            document.getElementById('productTableBody').appendChild(row);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur de récupération des produits :', error);
+                    alert('Une erreur est survenue lors du chargement des produits.');
+                });
+        }
+
+        function deleteProduct(productId) {
+            const confirmation = confirm('Êtes-vous sûr de vouloir supprimer ce produit ?');
+            if (confirmation) {
+                fetch(`http://localhost:5000/products/${productId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Produit supprimé avec succès');
+                            // Vous pouvez ici rafraîchir la table ou supprimer la ligne de la vue
+                            document.getElementById('productTableBody').innerHTML = ''; // Clear table
+                            afficherProduits(); // Reload products after deletion
+                        } else {
+                            alert('Erreur lors de la suppression du produit');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur:', error);
+                        alert('Une erreur est survenue lors de la suppression du produit');
+                    });
+            }
+        }
+
+        function editProduct(productId) {
+            // Récupère les données du produit à modifier en utilisant l'ID
+            const productRow = document.querySelector(`#product-${productId}`);
+            const nameCell = productRow.querySelector('.product-name');
+            const priceCell = productRow.querySelector('.product-price');
+            const unitsCell = productRow.querySelector('.product-units');
+
+            // Remplir les champs d'édition avec les valeurs actuelles du produit
+            const productName = prompt("Nom du produit", nameCell.textContent);
+            const productPrice = prompt("Prix du produit", priceCell.textContent);
+            const productUnits = prompt("Unités par carton", unitsCell.textContent);
+
+            // Vérification si l'utilisateur a saisi de nouvelles valeurs
+            if (productName && productPrice && productUnits) {
+                const updatedProduct = {
+                    id: productId,
+                    nom: productName,
+                    prix: parseFloat(productPrice),
+                    unites_par_carton: parseInt(productUnits)
+                };
+
+                // Requête POST pour envoyer le produit mis à jour
+                fetch('http://localhost:5000/products/update', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updatedProduct)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message === 'Produit mis à jour avec succès') {
+                            // Mise à jour des valeurs dans le tableau
+                            nameCell.textContent = productName;
+                            priceCell.textContent = productPrice;
+                            unitsCell.textContent = productUnits;
+                            alert('Produit mis à jour avec succès');
+                        } else {
+                            alert('Erreur de mise à jour du produit');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur de mise à jour :', error);
+                        alert('Une erreur est survenue lors de la mise à jour du produit');
+                    });
+            }
+        }
+
+
+
+
+        // Charger les produits dès que la page est prête
+        window.onload = loadProducts;
+    </script>
+</body>
+
+</html>

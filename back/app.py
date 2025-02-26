@@ -9,11 +9,17 @@ from blueprints.magasins import magasins_bp
 from blueprints.users import users_bp
 from blueprints.stock import stock_bp
 from blueprints.sales import sales_bp
+from flask_jwt_extended import JWTManager
 
 app = Flask(__name__)
 CORS(app)
 app.config.from_object(Config)
 migrate = Migrate(app, db)
+
+app.config['JWT_SECRET_KEY'] = 'votre_clé_secrète'
+
+# Initialisation de JWT
+jwt = JWTManager(app)
 
 # Initialisation de SQLAlchemy
 db.init_app(app)

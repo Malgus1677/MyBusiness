@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Déconnexion</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1f1c2c, #928dab);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(15px);
+        }
+
+        h1 {
+            color: white;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        p {
+            color: white;
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .btn-custom {
+            background: linear-gradient(135deg, #ff3d3d, #ff6b6b);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-custom:hover {
+            background: linear-gradient(135deg, #ff6b6b, #ff3d3d);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Vous êtes maintenant déconnecté</h1>
+        <p>Nous avons supprimé votre session. Vous pouvez vous reconnecter à tout moment.</p>
+        <a href="login.html">
+            <button class="btn-custom">Retour à la connexion</button>
+        </a>
+    </div>
+
+    <script>
+        // Fonction pour supprimer le jeton et rediriger
+        function logout() {
+            localStorage.removeItem('token', data.token);
+            localStorage.removeItem('role', data.role);
+            localStorage.removeItem('username', username);
+            localStorage.removeItem('magasin', data.magasin_id);
+            window.location.href = 'login.html';   // Redirige vers la page de connexion
+        }
+
+        // Appeler la fonction logout lorsque la page est prête
+        window.onload = logout;
+    </script>
+</body>
+
+</html>

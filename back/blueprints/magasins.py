@@ -13,6 +13,35 @@ def get_magasins():
         'adresse': m.adresse
     } for m in magasins])
 
+@magasins_bp.route('/add', methods=['POST'])
+def ajouter_magasin():
+    data = request.get_json()  # Récupérer les données JSON envoyées depuis le frontend
+    
+    # Vérification si les champs 'nom' et 'adresse' existent dans la requête
+    if not data.get('nom') or not data.get('adresse'):
+        return jsonify({'message': 'Nom et adresse du magasin sont requis'}), 400
+    
+    # Créer un nouvel ID pour le magasin
+    new_id = len(magasins) + 1
+    
+    # Créer un nouveau magasin
+    new_magasin = {
+        "id": new_id,
+        "nom": data['nom'],
+        "adresse": data['adresse']
+    }
+    
+    # Ajouter le magasin à la liste
+    magasins.append(new_magasin)
+    
+    # Retourner une réponse de succès avec les détails du magasin ajouté
+    return jsonify({
+        'message': 'Magasin ajouté avec succès',
+        'id': new_magasin['id'],
+        'nom': new_magasin['nom'],
+        'adresse': new_magasin['adresse']
+    }), 201
+
 @magasins_bp.route('/<int:id>', methods=['GET'])
 def get_magasin(id):
     m = Magasin.query.get_or_404(id)

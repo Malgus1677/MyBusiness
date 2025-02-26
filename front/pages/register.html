@@ -1,116 +1,454 @@
-<!DOCTYPE html>
-<html lang="fr">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Créer un compte</title>
+    <title>Inscription</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        /* Arrière-plan animé */
         body {
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
-            font-family: 'Arial', sans-serif;
-            color: #fff;
+            background: linear-gradient(135deg, #1f1c2c, #928dab);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Effet d'étoiles animées */
+        body::before {
+            content: "";
+            position: absolute;
+            width: 200vw;
+            height: 200vh;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1%, transparent 5%);
+            animation: moveStars 60s linear infinite;
+        }
+
+        @keyframes moveStars {
+            from {
+                transform: translate(-50%, -50%);
+            }
+
+            to {
+                transform: translate(50%, 50%);
+            }
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            /* Affichage en colonne, les éléments seront l'un sous l'autre */
+            justify-content: center;
+            align-items: center;
         }
 
         .auth-container {
-            max-width: 450px;
-            margin: 100px auto;
-            background-color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(15px);
             padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease-in-out;
+            width: 380px;
+            text-align: center;
+            color: white;
+            position: relative;
+            z-index: 1;
+            animation: fadeIn 1s ease-in-out;
+            margin-bottom: 30px;
+            /* Ajouter un espace entre le formulaire et le tableau */
         }
 
-        .auth-container:hover {
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .auth-header {
-            text-align: center;
+            font-size: 26px;
+            font-weight: 600;
             margin-bottom: 20px;
-            font-size: 24px;
-            color: #333;
-            font-weight: bold;
         }
 
-        .btn-custom {
-            background-color: #007bff;
-            color: #fff;
-            font-weight: bold;
-            transition: background-color 0.3s ease;
-        }
-
-        .btn-custom:hover {
-            background-color: #0056b3;
+        /* Champs de saisie stylisés */
+        .form-group {
+            position: relative;
+            margin-bottom: 20px;
         }
 
         .form-control {
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: white;
+            padding: 12px 15px 12px 45px;
+            border-radius: 10px;
+            width: 100%;
+            transition: 0.3s;
             font-size: 16px;
         }
 
         .form-control:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+            background: rgba(255, 255, 255, 0.25);
+            outline: none;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
         }
 
-        .form-group label {
-            font-weight: 600;
-            color: #555;
+        /* Icônes intégrées dans les champs */
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.8);
         }
 
-        .text-center a {
-            color: #007bff;
-            font-weight: bold;
+        header {
+            background-color: #343a40;
+            padding: 10px 20px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            /* S'assure que le header est au-dessus des autres éléments */
+        }
+
+        header a {
+            color: #fff;
+            font-size: 18px;
+            margin-right: 20px;
             text-decoration: none;
+            font-weight: bold;
+        }
+
+        header a:hover {
+            color: #ff6b6b;
+        }
+
+        /* Bouton stylisé */
+        .btn-custom {
+            background: linear-gradient(135deg, #ff3d3d, #ff6b6b);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            font-size: 16px;
+            box-shadow: 0 4px 10px rgba(255, 50, 50, 0.5);
+        }
+
+        .btn-custom:hover {
+            background: linear-gradient(135deg, #ff6b6b, #ff3d3d);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 50, 50, 0.7);
+        }
+
+        /* Lien stylisé */
+        .text-center a {
+            color: #ff3d3d;
+            text-decoration: none;
+            font-weight: 600;
         }
 
         .text-center a:hover {
             text-decoration: underline;
         }
 
-        .auth-footer {
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            /* Fusionne les bordures des cellules */
             margin-top: 20px;
-            font-size: 14px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            /* Bordure légère sous chaque ligne */
+        }
+
+        th {
+            background-color: #f4f4f4;
+            /* Fond gris clair pour l'en-tête */
+            color: #333;
+            /* Texte noir pour l'en-tête */
+            font-weight: bold;
+        }
+
+        td {
+            background-color: #fff;
+            /* Fond blanc pour les données */
             color: #555;
+            /* Couleur de texte plus sombre pour les données */
+            font-size: 16px;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+            /* Survol léger pour chaque ligne */
+            cursor: pointer;
+            /* Le curseur devient une main quand on survole */
+        }
+
+        .product-row td {
+            transition: background-color 0.3s;
+            /* Animation pour le changement de couleur */
+        }
+
+        .product-row:hover td {
+            background-color: #f9f9f9;
+            /* Fond encore plus clair lors du survol */
         }
     </style>
 </head>
 
 <body>
+    <header id="header" style="display: none;">
+        <a href="products.html">Produits</a>
+        <a href="magasin.html">Magasins</a>
+        <a href="register.html">Utilisateurs</a>
+        <a href="logout.html" style="float: right;">Déconnexion</a>
+    </header>
 
+    <!-- Formulaire d'inscription -->
     <div class="container">
         <div class="auth-container">
-            <h2 class="auth-header">Créer un compte</h2>
-            <form action="#" method="POST">
+            <h2 class="auth-header">Inscription</h2>
+            <form id="registerForm">
+                <!-- Champs du formulaire -->
                 <div class="form-group mb-3">
-                    <label for="username">Nom d'utilisateur</label>
-                    <input type="text" class="form-control" id="username" placeholder="Entrez votre nom d'utilisateur" required>
+                    <label for="nom">Nom </label>
+                    <input type="text" class="form-control" id="nom" placeholder="Entrez votre nom" required>
                 </div>
                 <div class="form-group mb-3">
-                    <label for="email">Adresse e-mail</label>
-                    <input type="email" class="form-control" id="email" placeholder="Entrez votre adresse e-mail" required>
+                    <label for="prenom">Prénom</label>
+                    <input type="text" class="form-control" id="prenom" placeholder="Entrez votre prénom" required>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="username">Nom d'utilisateur</label>
+                    <input type="text" class="form-control" id="username" placeholder="Choisissez un nom d'utilisateur"
+                        required>
                 </div>
                 <div class="form-group mb-3">
                     <label for="password">Mot de passe</label>
-                    <input type="password" class="form-control" id="password" placeholder="Entrez votre mot de passe" required>
+                    <input type="password" class="form-control" id="password" placeholder="Entrez votre mot de passe"
+                        required>
                 </div>
                 <div class="form-group mb-3">
                     <label for="confirmPassword">Confirmer le mot de passe</label>
-                    <input type="password" class="form-control" id="confirmPassword" placeholder="Confirmez votre mot de passe" required>
+                    <input type="password" class="form-control" id="confirmPassword"
+                        placeholder="Confirmez votre mot de passe" required>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="role">Rôle</label>
+                    <select class="form-control" id="role">
+                        <option value="admin">Admin</option>
+                        <option value="manager">Manager</option>
+                        <option value="employee">Employé</option>
+                    </select>
+                </div>
+                <div class="form-group mb-3" id="magasinContainer" style="display: none;">
+                    <label for="magasin">Magasin</label>
+                    <select class="form-control" id="magasin">
+                        <option value="1">Magasin 1</option>
+                        <option value="2">Magasin 2</option>
+                        <option value="3">Magasin 3</option>
+                    </select>
                 </div>
                 <button type="submit" class="btn btn-custom w-100">S'inscrire</button>
             </form>
-            <div class="text-center mt-3">
-                <p>Vous avez déjà un compte ? <a href="login.html">Se connecter</a></p>
-            </div>
+        </div>
+
+        <!-- Tableau des utilisateurs (affiché uniquement si l'utilisateur est connecté) -->
+        <div class="container" id="usersTableContainer" style="display: none;">
+            <table id="usersTable">
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Nom d'utilisateur</th>
+                        <th>Rôle</th>
+                        <th>Magasin</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Les lignes des utilisateurs seront ajoutées ici -->
+                </tbody>
+            </table>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function checkUserAuthentication() {
+            var token = localStorage.getItem('token'); // Récupérer le token d'authentification
+            console.log('token', token);
+
+            if (token) {
+                // Si le token est présent, afficher le header et le tableau des utilisateurs
+                document.getElementById('header').style.display = 'block';
+                document.getElementById('usersTableContainer').style.display = 'block';
+            } else {
+                // Sinon, cacher le header et le tableau
+                document.getElementById('header').style.display = 'none';
+                document.getElementById('usersTableContainer').style.display = 'none';
+            }
+        }
+
+        // Appeler la fonction de vérification lorsque la page est chargée
+        window.onload = checkUserAuthentication;
+
+        // Afficher le champ magasin si le rôle est manager ou employé
+        document.getElementById('role').addEventListener('change', function () {
+            var magasinContainer = document.getElementById('magasinContainer');
+            magasinContainer.style.display = (this.value === 'manager' || this.value === 'employee') ? 'block' : 'none';
+        });
+
+        // Soumission du formulaire
+        document.getElementById('registerForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Empêche le rechargement de la page
+
+            // Récupération des valeurs
+            var nom = document.getElementById('nom').value;
+            var prenom = document.getElementById('prenom').value;
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+            var confirmPassword = document.getElementById('confirmPassword').value;
+            var role = document.getElementById('role').value;
+            var magasin = (role === 'manager' || role === 'employee') ? document.getElementById('magasin').value : null;
+
+            // Vérifier si les mots de passe correspondent
+            if (password !== confirmPassword) {
+                alert('Les mots de passe ne correspondent pas.');
+                return;
+            }
+
+            // Objet JSON à envoyer au serveur
+            var formData = {
+                nom: nom,
+                prenom: prenom,
+                username: username,
+                password: password,
+                role: role,
+                magasin_id: magasin
+            };
+
+            // Requête fetch pour enregistrer l'utilisateur
+            fetch('http://localhost:5000/users/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === 'Utilisateur créé avec succès') {
+                        window.location.href = 'login.html'; // Redirection vers la page de connexion
+                    } else {
+                        alert('Erreur : ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur de soumission du formulaire :', error);
+                    alert('Une erreur est survenue.');
+                });
+        });
+
+        // Fonction d'édition d'un utilisateur
+        function editUser(userId) {
+            // Récupération des informations actuelles de l'utilisateur
+            const userRow = document.querySelector(`#user-${userId}`);
+            const nameCell = userRow.querySelector('.user-name');
+            const usernameCell = userRow.querySelector('.user-username');
+            const roleCell = userRow.querySelector('.user-role');
+            const magasinCell = userRow.querySelector('.user-magasin');
+
+            // Demander à l'utilisateur les nouvelles informations
+            const newName = prompt("Nom de l'utilisateur", nameCell.textContent);
+            const newUsername = prompt("Nom d'utilisateur", usernameCell.textContent);
+            const newRole = prompt("Rôle", roleCell.textContent);
+            const newMagasin = prompt("Magasin", magasinCell.textContent);
+
+            if (newName && newUsername && newRole && newMagasin) {
+                const updatedUser = {
+                    id: userId,
+                    nom: newName,
+                    username: newUsername,
+                    role: newRole,
+                    magasin_id: newMagasin
+                };
+
+                // Requête POST pour mettre à jour l'utilisateur
+                fetch(`http://localhost:5000/users/edit/${userId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updatedUser)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message === 'Utilisateur mis à jour avec succès') {
+                            // Mise à jour des valeurs dans le tableau
+                            nameCell.textContent = newName;
+                            usernameCell.textContent = newUsername;
+                            roleCell.textContent = newRole;
+                            magasinCell.textContent = newMagasin;
+                            alert('Utilisateur mis à jour avec succès');
+                        } else {
+                            alert('Erreur de mise à jour de l\'utilisateur');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur de mise à jour :', error);
+                        alert('Une erreur est survenue lors de la mise à jour de l\'utilisateur');
+                    });
+            }
+        }
+
+        // Fonction de suppression d'un utilisateur
+        function deleteUser(userId) {
+            if (confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")) {
+                fetch(`http://localhost:5000/users/delete/${userId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message === 'Utilisateur supprimé avec succès') {
+                            const userRow = document.querySelector(`#user-${userId}`);
+                            userRow.remove(); // Suppression de la ligne dans le tableau
+                            alert('Utilisateur supprimé avec succès');
+                        } else {
+                            alert('Erreur lors de la suppression de l\'utilisateur');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur de suppression :', error);
+                        alert('Une erreur est survenue lors de la suppression de l\'utilisateur');
+                    });
+            }
+        }
+
+    </script>
+
 </body>
 
 </html>

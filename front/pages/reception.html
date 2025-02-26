@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page de Réception de Stock</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Style personnalisé pour l'apparence générale */
+        body {
+            background: linear-gradient(135deg, #1f1c2c, #928dab);
+            font-family: 'Poppins', sans-serif;
+            color: white;
+            padding: 0;
+            display: flex;
+            margin: 0;
+        }
+
+        .container {
+            margin-top: 30px;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Header */
+        header {
+            background-color: #343a40;
+            padding: 10px 20px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 10;
+        }
+
+        header a {
+            color: #fff;
+            font-size: 18px;
+            margin-right: 20px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        header a:hover {
+            color: #ff6b6b;
+        }
+
+        .auth-container {
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 8px;
+            padding: 40px;
+            max-width: 400px;
+            margin: 50px auto;
+            display: none;
+            animation: slideIn 2s ease-in-out;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            font-size: 16px;
+            color: #ddd;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            color: #333;
+        }
+
+        .form-control:focus {
+            border-color: #ff6b6b;
+            outline: none;
+        }
+
+        .btn-custom {
+            background: linear-gradient(135deg, #ff3d3d, #ff6b6b);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        .btn-custom:hover {
+            background: linear-gradient(135deg, #ff6b6b, #ff3d3d);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 50, 50, 0.7);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-100px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f4f4f4;
+            color: #333;
+            font-weight: bold;
+        }
+
+        td {
+            background-color: #fff;
+            color: #555;
+            font-size: 16px;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="/">Accueil</a>
+    <a href="/stocks">Gérer les Stocks</a>
+</header>
+
+<div class="container">
+    <button id="addProductButton" class="btn-custom">Ajouter un produit au stock</button>
+
+    <div class="auth-container" id="receptionFormContainer">
+        <h2 class="auth-header">Ajouter un Stock</h2>
+
+        <form id="receptionForm">
+            <div class="form-group">
+                <label for="productSelect" class="form-label">Sélectionner le produit</label>
+                <select id="productSelect" class="form-control" required>
+                    <option value="">Sélectionner un produit</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="quantity" class="form-label">Quantité</label>
+                <input type="number" id="quantity" class="form-control" placeholder="Quantité" required>
+            </div>
+
+            <button type="submit" class="btn-custom">Ajouter la réception</button>
+        </form>
+    </div>
+</div>
+
+<script>
+
+    const magasin = localStorage.getItem('magasin');
+    if (!magasin) {
+        window.location.href = '/login.html';
+    }
+    // Montrer le formulaire lorsque le bouton "Ajouter un produit" est cliqué
+    document.getElementById('addProductButton').addEventListener('click', function() {
+        document.getElementById('receptionFormContainer').style.display = 'block';
+    });
+
+    // Récupérer les produits
+    fetch('/api/products')
+        .then(response => response.json())
+        .then(data => {
+            const productSelect = document.getElementById('productSelect');
+            data.products.forEach(product => {
+                const option = document.createElement('option');
+                option.value = product.id;
+                option.textContent = product.nom;
+                productSelect.appendChild(option);
+            });
+        })
+        .catch(error => console.error('Erreur lors de la récupération des produits:', error));
+
+    // Soumettre le formulaire de réception
+    document.getElementById('receptionForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const storeId = document.getElementById('storeSelect').value;
+        const productId = document.getElementById('productSelect').value;
+        const quantity = document.getElementById('quantity').value;
+
+        const stockData = {
+            magasin_id: magasin,
+            product_id: productId,
+            quantity: quantity
+        };
+
+        fetch('/api/stock', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(stockData),
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            document.getElementById('receptionForm').reset();
+            document.getElementById('receptionFormContainer').style.display = 'none'; // Fermer le formulaire
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+        });
+    });
+</script>
+
+</body>
+</html>

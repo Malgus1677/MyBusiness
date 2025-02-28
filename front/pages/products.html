@@ -190,22 +190,24 @@
         <!-- Tableau pour afficher les produits -->
         <div class="auth-container" style="margin-top: 40px;">
             <h2 class="auth-header">Liste des produits</h2>
-            <table class="table table-striped">
-                <thead>
+            <table class="table table-dark table-striped table-hover text-center">
+                <caption class="text-light">Liste des magasins</caption>
+                <thead class="thead-light">
                     <tr>
-                        <th>#</th>
-                        <th>Nom</th>
-                        <th>Prix d'achat</th>
-                        <th>Unité par carton</th>
+                        <th scope="col">#</th>
+                        <th scope="col">Nom</th>
+                        <th scope="col">Prix d'achat</th>
+                        <th scope="col">Unité par carton</th>
+                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
-                <tbody id="productTableBody">
-                    <!-- Les produits seront ajoutés ici dynamiquement -->
+                <tbody id="magasinsTableBody">
+                    <!-- Les magasins seront ajoutés ici dynamiquement -->
                 </tbody>
             </table>
         </div>
     </div>
-
+    
     <script>
         document.getElementById('productForm').addEventListener('submit', function (event) {
             event.preventDefault(); // Empêche le rechargement de la page
@@ -323,56 +325,97 @@
         }
 
         function editProduct(productId) {
-            // Récupère les données du produit à modifier en utilisant l'ID
-            const productRow = document.querySelector(`#product-${productId}`);
-            const nameCell = productRow.querySelector('.product-name');
-            const priceCell = productRow.querySelector('.product-price');
-            const unitsCell = productRow.querySelector('.product-units');
+
+            const magasinRow = document.querySelector(`#product-${magasinId}`);
+            const nameCell = magasinRow.querySelector('td:nth-child(1)');
+            const priceCell = magasinRow.querySelector('td:nth-child(2)');
+            const unitsCell = magasinRow.querySelector('td:nth-child(3)');
+
 
             // Remplir les champs d'édition avec les valeurs actuelles du produit
-            const productName = prompt("Nom du produit", nameCell.textContent);
-            const productPrice = prompt("Prix du produit", priceCell.textContent);
-            const productUnits = prompt("Unités par carton", unitsCell.textContent);
+            const form = document.getElementById('productForm');
+            const productName = form.querySelector('#nom');
+            const productPrice = form.querySelector('#prix');
+            const productUnits = form.querySelector('#unites_par_carton');
 
+            productName.value = nameCell.textContent;
+            productPrice.value = priceCell.textContent;
+            productUnits.value = unitsCell.textContent;
+
+            const updateButton = form.querySelector('#updateButton');
+            updateButton.style.display = 'block';
+
+            const addButton = form.querySelector('#addbutton');
+            addButton.style.display = 'none';
             // Vérification si l'utilisateur a saisi de nouvelles valeurs
-            if (productName && productPrice && productUnits) {
-                const updatedProduct = {
-                    id: productId,
-                    nom: productName,
-                    prix: parseFloat(productPrice),
-                    unites_par_carton: parseInt(productUnits)
+            updateButton.onclick = function () {
+                const newName = productName.value;
+                const newPrice = productPrice.value;
+                const newUnits = productUnits.value;
+
+                if (newName === nameCell.textContent && newPrice === priceCell.textContent && newUnits === unitsCell.textContent) {
+                    alert('Aucune modification détectée');
+                    return;
+                }
+
+                const formData = {
+                    nom: newName,
+                    prix: newPrice,
+                    unites_par_carton: newUnits
                 };
 
-                // Requête POST pour envoyer le produit mis à jour
-                fetch('http://localhost:5000/products/update', {
-                    method: 'POST',
+                fetch(`http://localhost:5000/products/update/${productId}`, {
+                    method: 'PUT',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(updatedProduct)
+                    body: JSON.stringify(formData)
                 })
                     .then(response => response.json())
                     .then(data => {
-                        if (data.message === 'Produit mis à jour avec succès') {
-                            // Mise à jour des valeurs dans le tableau
-                            nameCell.textContent = productName;
-                            priceCell.textContent = productPrice;
-                            unitsCell.textContent = productUnits;
+                        if (data.success) {
                             alert('Produit mis à jour avec succès');
+                            // Réinitialiser le formulaire après la mise à jour
+                            form.reset();
+                            // Recharger la liste des produits
+                            loadProducts();
                         } else {
-                            alert('Erreur de mise à jour du produit');
+                            alert('Erreur lors de la mise à jour du produit');
                         }
                     })
                     .catch(error => {
-                        console.error('Erreur de mise à jour :', error);
+                        console.error('Erreur:', error);
                         alert('Une erreur est survenue lors de la mise à jour du produit');
+                    });
+            };
+        }
+
+        function deleteProduct(productId) {
+            const confirmation = confirm('Êtes-vous sûr de vouloir supprimer ce produit ?');
+            if (confirmation) {
+                fetch(`http://localhost:5000/products/delete${productId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Produit supprimé avec succès');
+                            // Vous pouvez ici rafraîchir la table ou supprimer la ligne de la vue
+                            document.getElementById('productTableBody').innerHTML = ''; // Clear table
+                            loadProducts(); // Reload products after deletion
+                        } else {
+                            alert('Erreur lors de la suppression du produit');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur:', error);
+                        alert('Une erreur est survenue lors de la suppression du produit');
                     });
             }
         }
-
-
-
-
         // Charger les produits dès que la page est prête
         window.onload = loadProducts;
     </script>

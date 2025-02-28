@@ -152,14 +152,17 @@
                 <label for="adresse" class="form-label">Adresse</label>
                 <input type="text" class="form-control" id="adresse" placeholder="Entrez l'adresse du magasin" required>
             </div>
-            <button type="submit" class="btn btn-custom">Ajouter le magasin</button>
+            <button type="submit" class="btn btn-custom" id="addbutton" style="display: block;">Ajouter le magasin</button>
+            <button type="submit" class="btn btn-custom" id="updateButton" style="display:none;">Mettre à jour</button>
+            
         </form>
 
         <h1 class="text-center mb-4 mt-5">Liste des Magasins</h1>
 
         <!-- Tableau des magasins -->
-        <table class="table table-dark table-striped">
-            <thead>
+        <table class="table table-dark table-striped table-hover text-center">
+            <caption class="text-light">Liste des magasins</caption>
+            <thead class="thead-light">
                 <tr>
                     <th scope="col">Nom</th>
                     <th scope="col">Adresse</th>
@@ -167,9 +170,11 @@
                 </tr>
             </thead>
             <tbody id="magasinsTableBody">
-                <!-- Les magasins seront ajoutés ici -->
+                <!-- Les magasins seront ajoutés ici dynamiquement -->
             </tbody>
         </table>
+
+
     </div>
 
     <script>
@@ -198,17 +203,18 @@
                     } else {
                         // Afficher les magasins si disponibles
                         data.forEach(magasin => {
+                            console.log('magasin', magasin);
                             const row = document.createElement('tr');
                             row.id = `magasin-${magasin.id}`;  // Ajout de l'ID pour sélection facile
 
                             row.innerHTML = `
-                        <td>${magasin.nom}</td>
-                        <td>${magasin.adresse}</td>
-                        <td>
-                            <a href="/produits/${magasin.id}" class="btn btn-custom">Voir Produits</a>
-                            <button class="btn btn-edit" onclick="editMagasin(${magasin.id})">Éditer</button>
-                            <button class="btn btn-delete" onclick="deleteMagasin(${magasin.id})">Supprimer</button>
+                       <td>${magasin.nom}</td>
+<td>${magasin.adresse}</td>
+<td>
+                            <button class="btn btn-warning btn-sm" onclick="editMagasin(${magasin.id})">Éditer</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteMagasin(${magasin.id})">Supprimer</button>
                         </td>
+
                     `;
                             magasinsTableBody.appendChild(row);
                         });
@@ -261,46 +267,67 @@
         });
 
         function editMagasin(magasinId) {
+            console.log('magasinId', magasinId);
             const magasinRow = document.querySelector(`#magasin-${magasinId}`);
             const nameCell = magasinRow.querySelector('td:nth-child(1)');
             const addressCell = magasinRow.querySelector('td:nth-child(2)');
 
-            // Demander à l'utilisateur les nouvelles informations
-            const newName = prompt("Nom du magasin", nameCell.textContent);
-            const newAddress = prompt("Adresse du magasin", addressCell.textContent);
+            // Trouver le formulaire
+            const form = document.querySelector('#magasinForm');
+            const nameInput = form.querySelector('#nom');
+            const addressInput = form.querySelector('#adresse');
 
-            if (newName && newAddress) {
-                const updatedMagasin = {
-                    id: magasinId,
-                    nom: newName,
-                    adresse: newAddress
-                };
+            // Remplir les champs du formulaire avec les informations actuelles
+            nameInput.value = nameCell.textContent;
+            addressInput.value = addressCell.textContent;
 
-                // Requête POST pour envoyer le magasin mis à jour
-                fetch('http://localhost:5000/magasins/update', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(updatedMagasin)
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.message === 'Magasin mis à jour avec succès') {
-                            // Mise à jour du tableau avec les nouvelles valeurs
-                            nameCell.textContent = newName;
-                            addressCell.textContent = newAddress;
-                            alert('Magasin mis à jour avec succès');
-                        } else {
-                            alert('Erreur de mise à jour du magasin');
-                        }
+            // Afficher un bouton de mise à jour
+            const updateButton = form.querySelector('#updateButton');
+            updateButton.style.display = 'block';
+
+            const addButton = form.querySelector('#addbutton');
+            addButton.style.display = 'none';
+
+            // Ajouter un événement au bouton de mise à jour
+            updateButton.onclick = function (event) {
+                event.preventDefault();
+                const newName = nameInput.value;
+                const newAddress = addressInput.value;
+
+                if (newName && newAddress) {
+                    const updatedMagasin = {
+                        id: magasinId,
+                        nom: newName,
+                        adresse: newAddress
+                    };
+
+                    // Requête POST pour envoyer le magasin mis à jour
+                    fetch(`http://localhost:5000/magasins/update/${magasinId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(updatedMagasin)
                     })
-                    .catch(error => {
-                        console.error('Erreur:', error);
-                        alert('Une erreur est survenue lors de la mise à jour du magasin');
-                    });
-            }
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.message === 'Magasin mis à jour avec succès') {
+                                // Mise à jour du tableau avec les nouvelles valeurs
+                                nameCell.textContent = newName;
+                                addressCell.textContent = newAddress;
+                                alert('Magasin mis à jour avec succès');
+                            } else {
+                                alert('Erreur de mise à jour du magasin');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Erreur:', error);
+                            alert('Une erreur est survenue lors de la mise à jour du magasin');
+                        });
+                }
+            };
         }
+
 
         function deleteMagasin(magasinId) {
             if (confirm("Êtes-vous sûr de vouloir supprimer ce magasin ?")) {

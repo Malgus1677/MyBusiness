@@ -118,7 +118,7 @@ def create_user():
 
     # Si le rôle est 'admin', le magasin_id doit être None
     if role == 'admin':
-        magasin_id = null
+        magasin_id = None
     
     # Création de l'utilisateur
     new_user = User(
@@ -134,12 +134,12 @@ def create_user():
     db.session.commit()
 
     return jsonify({
-        'id': new_user.id,
         'nom': new_user.nom,
         'prenom': new_user.prenom,
         'username': new_user.username,
         'role': new_user.role,
-        'magasin_id': new_user.magasin_id
+        'magasin_id': new_user.magasin_id,
+        'message': 'Utilisateur créé avec succès'
     }), 201
 
 # Vérification du mot de passe lors de la connexion (POST)

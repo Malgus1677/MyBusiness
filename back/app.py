@@ -17,6 +17,8 @@ app.config.from_object(Config)
 migrate = Migrate(app, db)
 
 app.config['JWT_SECRET_KEY'] = 'votre_clé_secrète'
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 3600  # 1 heure
+app.config['DEBUG'] = True
 
 # Initialisation de JWT
 jwt = JWTManager(app)

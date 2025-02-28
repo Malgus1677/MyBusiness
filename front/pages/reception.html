@@ -1,5 +1,6 @@
-<!DOCTYPE html>
+reception.html<!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,9 +12,11 @@
             background: linear-gradient(135deg, #1f1c2c, #928dab);
             font-family: 'Poppins', sans-serif;
             color: white;
+            margin: 0;
             padding: 0;
             display: flex;
-            margin: 0;
+            height: 100vh;
+            flex-direction: column;
         }
 
         .container {
@@ -21,6 +24,8 @@
             width: 80%;
             margin-left: auto;
             margin-right: auto;
+            flex: 1;
+            padding-bottom: 20px;
         }
 
         /* Header */
@@ -46,14 +51,16 @@
             color: #ff6b6b;
         }
 
+        /* Formulaire de réception */
         .auth-container {
             background-color: rgba(0, 0, 0, 0.7);
             border-radius: 8px;
-            padding: 40px;
-            max-width: 400px;
-            margin: 50px auto;
-            display: none;
-            animation: slideIn 2s ease-in-out;
+            padding: 20px;
+            max-width: 100%;
+            margin-top: 60px;
+            display: block;
+            overflow-y: auto;
+            flex: 1;
         }
 
         .auth-header {
@@ -105,21 +112,10 @@
             box-shadow: 0 6px 15px rgba(255, 50, 50, 0.7);
         }
 
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(-100px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
         table {
             width: 100%;
             border-collapse: collapse;
+            /* Fusionne les bordures des cellules */
             margin-top: 20px;
         }
 
@@ -128,114 +124,350 @@
             padding: 12px;
             text-align: center;
             border-bottom: 1px solid #ddd;
+            /* Bordure légère sous chaque ligne */
         }
 
         th {
-            background-color: #f4f4f4;
-            color: #333;
+            background-color: #333;
+            /* Fond gris clair pour l'en-tête */
+            color: #ff3d3d;
+            /* Texte noir pour l'en-tête */
             font-weight: bold;
         }
 
         td {
-            background-color: #fff;
-            color: #555;
+            background-color: #333;
+            /* Fond blanc pour les données */
+            color: #f4f4f4;
+            /* Couleur de texte plus sombre pour les données */
             font-size: 16px;
         }
 
         tr:hover {
-            background-color: #f1f1f1;
+            background-color: #333;
+            color: #ff3d3d;
+            /* Survol léger pour chaque ligne */
             cursor: pointer;
+            /* Le curseur devient une main quand on survole */
+        }
+
+        /* Style pour la recherche */
+        #searchInput {
+            padding: 8px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            width: 100%;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        /* Style pour les résultats de recherche */
+        #searchResults {
+            margin-top: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            background-color: #fff;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        .search-result-item {
+            padding: 10px;
+            cursor: pointer;
+            color: #333;
+        }
+
+        .search-result-item:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Style pour afficher la liste des produits sélectionnés */
+        #selectedProductsTable {
+            margin-top: 20px;
+            width: 100%;
+            border-collapse: collapse;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        #selectedProductsTable th,
+        #selectedProductsTable td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        #selectedProductsTable th {
+            background-color: #333;
+            color: #f4f4f4;
+        }
+
+        #selectedProductsTable th:hover {
+            background-color: #333;
+            color: #ff3d3d;
+        }
+
+        #selectedProductsTable tr:hover {
+            background-color: #333;
+            color: #ff3d3d;
+            cursor: pointer;
+        }
+
+        #selectedProductsTable tr:hover .remove-btn {
+            color: #ff3d3d;
+        }
+
+        #selectedProductsTable tr:hover td {
+            background-color: #333;
+            color: #ff3d3d;
+        }
+
+        #selectedProductsTable td {
+            background-color: #333;
+            color: #f4f4f4;
+        }
+
+        .quantity-input {
+            width: 100px;
+        }
+
+        .remove-btn {
+            color: red;
+            cursor: pointer;
+            font-weight: bold;
         }
     </style>
 </head>
+
 <body>
 
-<header>
-    <a href="/">Accueil</a>
-    <a href="/stocks">Gérer les Stocks</a>
-</header>
+    <header>
+        <a href="/">Accueil</a>
+        <a href="/stocks">Gérer les receptions</a>
+    </header>
 
-<div class="container">
-    <button id="addProductButton" class="btn-custom">Ajouter un produit au stock</button>
+    <div class="container">
+        <!-- Bouton pour lancer le processus -->
+        <button id="addProductButton" class="btn-custom">Ajouter une réception</button>
 
-    <div class="auth-container" id="receptionFormContainer">
-        <h2 class="auth-header">Ajouter un Stock</h2>
+        <!-- Formulaire pour ajouter une réception, caché initialement -->
+        <div class="auth-container" id="receptionFormContainer" style="display:none;">
+            <h2 class="auth-header">Saisir une réception fournisseur</h2>
 
-        <form id="receptionForm">
-            <div class="form-group">
-                <label for="productSelect" class="form-label">Sélectionner le produit</label>
-                <select id="productSelect" class="form-control" required>
-                    <option value="">Sélectionner un produit</option>
-                </select>
-            </div>
+            <form id="receptionForm">
+                <!-- Champ de recherche de produit -->
+                <div class="form-group">
+                    <label for="productSearch" class="form-label">Rechercher un produit</label>
+                    <input type="text" id="searchInput" class="form-control" placeholder="Rechercher un produit...">
+                    <div id="searchResults"></div>
+                </div>
 
-            <div class="form-group">
-                <label for="quantity" class="form-label">Quantité</label>
-                <input type="number" id="quantity" class="form-control" placeholder="Quantité" required>
-            </div>
+                <!-- Tableau des produits sélectionnés -->
+                <table id="selectedProductsTable" class="table table-dark table-striped table-hover text-center">
+                    <thead class="thead-light">
+                        <tr>
+                            <th class="col">Nom du produit</th>
+                            <th class="col">Quantité</th>
+                            <th class="col">Prix</th>
+                            <th class="col">Total
+                            </th>
+                            <th class="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="selectedProductsBody">
+                        <!-- Les lignes seront ajoutées ici -->
+                    </tbody>
+                </table>
 
-            <button type="submit" class="btn-custom">Ajouter la réception</button>
-        </form>
+                <!-- Nom du fournisseur -->
+                <div class="form-group">
+                    <label for="supplierName" class="form-label">Nom du fournisseur</label>
+                    <input type="text" id="supplierName" class="form-control" placeholder="Nom du fournisseur">
+                </div>
+
+                <!-- Bouton pour ajouter la réception -->
+                <button type="button" class="btn-custom" onclick="addReception()">Ajouter la réception</button>
+            </form>
+        </div>
     </div>
-</div>
 
-<script>
 
-    const magasin = localStorage.getItem('magasin');
-    if (!magasin) {
-        window.location.href = '/login.html';
-    }
-    // Montrer le formulaire lorsque le bouton "Ajouter un produit" est cliqué
-    document.getElementById('addProductButton').addEventListener('click', function() {
-        document.getElementById('receptionFormContainer').style.display = 'block';
-    });
+    <script>
+        const magasin = localStorage.getItem('magasin');
+        if (!magasin) {
+            window.location.href = '/login.html';
+        }
 
-    // Récupérer les produits
-    fetch('/api/products')
-        .then(response => response.json())
-        .then(data => {
-            const productSelect = document.getElementById('productSelect');
-            data.products.forEach(product => {
-                const option = document.createElement('option');
-                option.value = product.id;
-                option.textContent = product.nom;
-                productSelect.appendChild(option);
-            });
-        })
-        .catch(error => console.error('Erreur lors de la récupération des produits:', error));
-
-    // Soumettre le formulaire de réception
-    document.getElementById('receptionForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-
-        const storeId = document.getElementById('storeSelect').value;
-        const productId = document.getElementById('productSelect').value;
-        const quantity = document.getElementById('quantity').value;
-
-        const stockData = {
-            magasin_id: magasin,
-            product_id: productId,
-            quantity: quantity
-        };
-
-        fetch('/api/stock', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(stockData),
-        })
-        .then(response => response.json())
-        .then(data => {
-            alert(data.message);
-            document.getElementById('receptionForm').reset();
-            document.getElementById('receptionFormContainer').style.display = 'none'; // Fermer le formulaire
-        })
-        .catch(error => {
-            console.error('Erreur:', error);
+        // Montrer le formulaire lorsque le bouton "Ajouter une réception" est cliqué
+        document.getElementById('addProductButton').addEventListener('click', function () {
+            document.getElementById('receptionFormContainer').style.display = 'block';
         });
-    });
-</script>
 
+        // Liste des produits sélectionnés
+        const selectedProducts = [];
+
+        // Fonction de recherche de produits
+        document.getElementById('searchInput').addEventListener('input', function (event) {
+            const query = event.target.value;
+
+            if (query.length > 2) {
+                fetch('http://localhost:5000/products/search', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ nom: query })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        const searchResults = document.getElementById('searchResults');
+                        searchResults.innerHTML = '';
+                        data.forEach(product => {
+                            const div = document.createElement('div');
+                            div.classList.add('search-result-item');
+                            div.textContent = product.nom;
+                            div.addEventListener('click', function () {
+                                addProductToSelection(product);
+                                searchResults.innerHTML = ''; // Clear results after selection
+                            });
+                            searchResults.appendChild(div);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de la recherche de produits:', error);
+                    });
+            }
+        });
+
+        // Ajouter un produit à la liste sélectionnée
+        function addProductToSelection(product) {
+            // Créer une nouvelle ligne dans le tableau des produits sélectionnés avec un champ de saisie pour la quantité
+            const row = document.createElement('tr');
+            row.innerHTML = `
+    <td class="col">${product.nom}</td>
+    <td class="col">
+        <input type="number" class="quantity-input form-control" value="1" min="1" data-id="${product.id}">
+    </td>
+    <td class="col">${product.prix_de_vente} €</td>
+    <td class="col">
+        <span class="total-price">${product.prix_de_vente} €</span>
+    </td>
+    <td class="col">
+        <button type="button" class="btn btn-danger btn-sm" onclick="removeProduct(${product.id})">Supprimer</button>
+    </td>
+`;
+
+
+            document.getElementById('selectedProductsBody').appendChild(row);
+
+            // Ajouter le produit à la liste avec la quantité par défaut
+            selectedProducts.push({
+                id: product.id,
+                nom: product.nom,
+                prix: product.prix_de_vente,
+                quantity: 1,  // Quantité initiale
+            });
+
+            // Optionnel : Appeler la fonction pour mettre à jour l'affichage du tableau
+            renderSelectedProducts();
+        }
+
+        // Afficher les produits sélectionnés dans le tableau
+        // Afficher les produits sélectionnés dans le tableau
+        function renderSelectedProducts() {
+            const tbody = document.getElementById('selectedProductsBody');
+            tbody.innerHTML = '';
+
+            selectedProducts.forEach(product => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+            <td class="col">${product.nom}</td>
+            <td class="col">
+                <input type="number" class="quantity-input form-control" value="${product.quantity}" min="1" data-id="${product.id}">
+            </td>
+            <td class="col">${product.prix} €</td>
+            <td class="col">
+                <span class="total-price">${(product.prix * product.quantity).toFixed(2)} €</span>
+            </td>
+            <td class="col">
+                <button type="button" class="btn btn-danger btn-sm" onclick="removeProduct(${product.id})">Supprimer</button>
+            </td>
+        `;
+                tbody.appendChild(row);
+            });
+
+            // Écouteur d'événement pour la mise à jour de la quantité
+            document.getElementById('selectedProductsBody').addEventListener('input', function (event) {
+                if (event.target && event.target.classList.contains('quantity-input')) {
+                    const productId = event.target.dataset.id;
+                    const quantity = parseInt(event.target.value);
+
+                    // Mise à jour de la quantité dans le tableau
+                    const product = selectedProducts.find(p => p.id == productId);
+                    if (product) {
+                        product.quantity = quantity;
+
+                        // Mettre à jour le total du produit dans le tableau
+                        const totalPriceElement = event.target.closest('tr').querySelector('.total-price');
+                        totalPriceElement.textContent = (product.prix * quantity).toFixed(2) + ' €';
+                    }
+                }
+            });
+        }
+
+
+        // Supprimer un produit de la sélection
+        function removeProduct(productId) {
+            // Supprimer le produit de la liste sélectionnée
+            const index = selectedProducts.findIndex(p => p.id === productId);
+            if (index !== -1) {
+                selectedProducts.splice(index, 1);
+                renderSelectedProducts();
+            }
+
+            // Supprimer la ligne du tableau
+            const row = document.querySelector(`tr[data-id="${productId}"]`);
+            if (row) {
+                row.remove();
+            }
+        }
+
+        // Soumettre la réception des produits
+        function addReception() {
+            const supplierName = document.getElementById('supplierName').value;
+
+            if (!supplierName) {
+                alert('Veuillez entrer le nom du fournisseur.');
+                return;
+            }
+
+            const stockData = {
+                magasin: magasin,
+                fournisseur: supplierName,
+                produits: selectedProducts,
+            };
+
+            console.log('stockData', stockData);
+
+            fetch(`http://localhost:5000/receptions/add`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(stockData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Réception ajoutée avec succès');
+                    document.getElementById('receptionForm').reset();
+                    selectedProducts.length = 0;
+                    renderSelectedProducts();
+                })
+                .catch(error => {
+                    console.error('Erreur lors de l\'ajout du stock:', error);
+                });
+        }
+    </script>
 </body>
+
 </html>

@@ -6,13 +6,13 @@ db = SQLAlchemy()
 
 class Magasin(db.Model):
     __tablename__ = 'magasins'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nom = db.Column(db.String(100), nullable=False)
     adresse = db.Column(db.String(200), nullable=False)
 
 class User(db.Model):
     __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nom = db.Column(db.String(100), nullable=False)
     prenom = db.Column(db.String(100), nullable=False)
     password = db.Column(db.String(100), nullable=False)
@@ -23,7 +23,7 @@ class User(db.Model):
 
 class Product(db.Model):
     __tablename__ = 'products'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nom = db.Column(db.String(100), nullable=False)
     # Prix d'achat du produit
     prix = db.Column(db.Float, nullable=False)
@@ -35,7 +35,7 @@ class Product(db.Model):
    
 class Stock(db.Model):
     __tablename__ = 'stock'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
     magasin_id = db.Column(db.Integer, db.ForeignKey('magasins.id'), nullable=False)
     # Quantité exprimée en unités
@@ -45,13 +45,13 @@ class Stock(db.Model):
 
 class Sales(db.Model):
     __tablename__ = 'sales'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
     magasin_id = db.Column(db.Integer, db.ForeignKey('magasins.id'), nullable=False)
     quantite = db.Column(db.Integer, nullable=False)  # en unités
     montant = db.Column(db.Float, nullable=False)
-    date = db.Column(db.DateTime, default=datetime.utcnow)
+    date = db.Column(db.DateTime, default=datetime.now)
     user = db.relationship('User', backref='sales')
     product = db.relationship('Product', backref='sales')
     magasin = db.relationship('Magasin', backref='sales')

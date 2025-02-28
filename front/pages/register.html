@@ -22,8 +22,8 @@
         body::before {
             content: "";
             position: absolute;
-            width: 200vw;
-            height: 200vh;
+            width: 100vw;
+            height: 100vh;
             background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1%, transparent 5%);
             animation: moveStars 60s linear infinite;
         }
@@ -298,7 +298,7 @@
             var token = localStorage.getItem('token'); // Récupérer le token d'authentification
             console.log('token', token);
 
-            if (token) {
+            if (token && token !== 'undefined') {
                 // Si le token est présent, afficher le header et le tableau des utilisateurs
                 document.getElementById('header').style.display = 'block';
                 document.getElementById('usersTableContainer').style.display = 'block';
@@ -355,71 +355,112 @@
                 },
                 body: JSON.stringify(formData)
             })
-                .then(response => response.json())
+                .then(response => response.text())  // Utiliser .text() pour vérifier la réponse brute
                 .then(data => {
-                    if (data.message === 'Utilisateur créé avec succès') {
-                        window.location.href = 'login.html'; // Redirection vers la page de connexion
-                    } else {
-                        alert('Erreur : ' + data.message);
+                    console.log("Réponse brute du serveur : ", data);  // Afficher la réponse brute
+                    try {
+                        const jsonData = JSON.parse(data);  // Essayer de convertir en JSON
+                        console.log("Réponse JSON du serveur : ", jsonData);  // Afficher la réponse JSON
+                        if (jsonData.message === 'Utilisateur créé avec succès') {
+                            window.location.href = 'login.html'; // Redirection vers la page de connexion
+                        } else {
+                            alert('Erreur : ' + jsonData.message);
+                        }
+                    } catch (error) {
+                        console.error("Erreur lors de la conversion en JSON : ", error);
+                        alert('Une erreur est survenue.');
                     }
                 })
                 .catch(error => {
                     console.error('Erreur de soumission du formulaire :', error);
                     alert('Une erreur est survenue.');
                 });
+
         });
 
         // Fonction d'édition d'un utilisateur
+        // Fonction d'édition d'un utilisateur
         function editUser(userId) {
-            // Récupération des informations actuelles de l'utilisateur
             const userRow = document.querySelector(`#user-${userId}`);
-            const nameCell = userRow.querySelector('.user-name');
-            const usernameCell = userRow.querySelector('.user-username');
-            const roleCell = userRow.querySelector('.user-role');
-            const magasinCell = userRow.querySelector('.user-magasin');
+            const nomRow = userRow.querySelector('td:nth-child(1)');
+            const prenomRow = userRow.querySelector('td:nth-child(2)');
+            const usernameRow = userRow.querySelector('td:nth-child(3)');
+            const roleRow = userRow.querySelector('td:nth-child(4)');
+            const magasinRow = userRow.querySelector('td:nth-child(5)');
 
-            // Demander à l'utilisateur les nouvelles informations
-            const newName = prompt("Nom de l'utilisateur", nameCell.textContent);
-            const newUsername = prompt("Nom d'utilisateur", usernameCell.textContent);
-            const newRole = prompt("Rôle", roleCell.textContent);
-            const newMagasin = prompt("Magasin", magasinCell.textContent);
+            // Pré-remplir le formulaire avec les données existantes
+            document.getElementById('nom').value = nomRow.textContent;
+            document.getElementById('prenom').value = prenomRow.textContent;
+            document.getElementById('username').value = usernameRow.textContent;
+            document.getElementById('role').value = roleRow.textContent.trim();
+            if (roleRow.textContent.trim() === 'manager' || roleRow.textContent.trim() === 'employee') {
+                document.getElementById('magasinContainer').style.display = 'block';
+                document.getElementById('magasin').value = magasinRow.textContent.trim();
+            } else {
+                document.getElementById('magasinContainer').style.display = 'none';
+            }
 
-            if (newName && newUsername && newRole && newMagasin) {
-                const updatedUser = {
-                    id: userId,
-                    nom: newName,
-                    username: newUsername,
-                    role: newRole,
-                    magasin_id: newMagasin
+            // Modifier l'action du formulaire pour l'édition
+            document.getElementById('registerForm').addEventListener('submit', function (event) {
+                event.preventDefault(); // Empêche le rechargement de la page
+
+                // Récupération des valeurs
+                var nom = document.getElementById('nom').value;
+                var prenom = document.getElementById('prenom').value;
+                var username = document.getElementById('username').value;
+                var password = document.getElementById('password').value;
+                var confirmPassword = document.getElementById('confirmPassword').value;
+                var role = document.getElementById('role').value;
+                var magasin = (role === 'manager' || role === 'employee') ? document.getElementById('magasin').value : null;
+
+                // Vérifier si les mots de passe correspondent
+                if (password !== confirmPassword) {
+                    alert('Les mots de passe ne correspondent pas.');
+                    return;
+                }
+
+                // Objet JSON à envoyer au serveur
+                var formData = {
+                    nom: nom,
+                    prenom: prenom,
+                    username: username,
+                    password: password,
+                    role: role,
+                    magasin_id: magasin
                 };
 
-                // Requête POST pour mettre à jour l'utilisateur
-                fetch(`http://localhost:5000/users/edit/${userId}`, {
-                    method: 'POST',
+                // Requête fetch pour modifier l'utilisateur
+                fetch(`http://localhost:5000/users/${userId}`, {
+                    method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(updatedUser)
+                    body: JSON.stringify(formData)
                 })
                     .then(response => response.json())
                     .then(data => {
                         if (data.message === 'Utilisateur mis à jour avec succès') {
-                            // Mise à jour des valeurs dans le tableau
-                            nameCell.textContent = newName;
-                            usernameCell.textContent = newUsername;
-                            roleCell.textContent = newRole;
-                            magasinCell.textContent = newMagasin;
+                            // Mettre à jour les valeurs dans le tableau
+                            nomRow.textContent = nom;
+                            prenomRow.textContent = prenom;
+                            usernameRow.textContent = username;
+                            roleRow.textContent = role;
+                            if (magasin) {
+                                magasinRow.textContent = magasin;
+                            }
+
                             alert('Utilisateur mis à jour avec succès');
                         } else {
-                            alert('Erreur de mise à jour de l\'utilisateur');
+                            alert('Erreur : ' + data.message);
                         }
                     })
                     .catch(error => {
-                        console.error('Erreur de mise à jour :', error);
-                        alert('Une erreur est survenue lors de la mise à jour de l\'utilisateur');
+                        console.error('Erreur de soumission du formulaire :', error);
+                        alert('Une erreur est survenue.');
                     });
-            }
+            });
         }
+
 
         // Fonction de suppression d'un utilisateur
         function deleteUser(userId) {

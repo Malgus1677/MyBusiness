@@ -1,6 +1,7 @@
 # blueprints/stock.py
 from flask import Blueprint, request, jsonify
 from models import Stock, db
+from flask_jwt_extended import jwt_required
 
 stock_bp = Blueprint('stock', __name__, url_prefix='/stock')
 
@@ -41,7 +42,7 @@ def delete_stock(id):
     db.session.commit()
     return jsonify({'message': 'Stock deleted successfully'})
 
-@app.route('/api/stock', methods=['POST'])
+@stock_bp.route('/api/stock', methods=['POST'])
 @jwt_required()  # Sécurisez la route avec l'authentification JWT
 def add_stock():
     try:

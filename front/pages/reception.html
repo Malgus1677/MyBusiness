@@ -1,4 +1,5 @@
-reception.html<!DOCTYPE html>
+reception.html
+<!DOCTYPE html>
 <html lang="fr">
 
 <head>
@@ -20,7 +21,7 @@ reception.html<!DOCTYPE html>
         }
 
         .container {
-            margin-top: 30px;
+            margin-top: 70px;
             width: 80%;
             margin-left: auto;
             margin-right: auto;
@@ -241,9 +242,14 @@ reception.html<!DOCTYPE html>
 
 <body>
 
-    <header>
-        <a href="/">Accueil</a>
-        <a href="/stocks">Gérer les receptions</a>
+    <header id="header">
+        <a href="products.html">Produits</a>
+        <a href="employee_dashboard.html">Employés</a>
+        <a href="admin_dashboard.html">Admin</a>
+        <a href="magasin.html">Magasins</a>
+        <a href="register.html">Utilisateurs</a>
+        <a href="logout.html" style="float: right;">Déconnexion</a>
+        <a href="reception.html">Receptions</a>
     </header>
 
     <div class="container">
@@ -275,9 +281,13 @@ reception.html<!DOCTYPE html>
                         </tr>
                     </thead>
                     <tbody id="selectedProductsBody">
-                        <!-- Les lignes seront ajoutées ici -->
                     </tbody>
                 </table>
+                <div class="form-group">
+                    <label for="total" class="form-label">Total</label>
+                    <input type="text" id="total" class="form-control" value="0 €" disabled>
+                </div>
+
 
                 <!-- Nom du fournisseur -->
                 <div class="form-group">
@@ -291,9 +301,10 @@ reception.html<!DOCTYPE html>
         </div>
     </div>
 
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         const magasin = localStorage.getItem('magasin');
+        console.log('magasin', magasin);
         if (!magasin) {
             window.location.href = '/login.html';
         }
@@ -325,13 +336,15 @@ reception.html<!DOCTYPE html>
                         data.forEach(product => {
                             const div = document.createElement('div');
                             div.classList.add('search-result-item');
-                            div.textContent = product.nom;
+                            // Combine le nom et le prix dans le même texte
+                            div.textContent = product.nom + ' - ' + product.prix_de_vente + ' €';
                             div.addEventListener('click', function () {
                                 addProductToSelection(product);
-                                searchResults.innerHTML = ''; // Clear results after selection
+                                document.getElementById('searchResults').innerHTML = '';
                             });
                             searchResults.appendChild(div);
                         });
+
                     })
                     .catch(error => {
                         console.error('Erreur lors de la recherche de produits:', error);
@@ -353,7 +366,7 @@ reception.html<!DOCTYPE html>
         <span class="total-price">${product.prix_de_vente} €</span>
     </td>
     <td class="col">
-        <button type="button" class="btn btn-danger btn-sm" onclick="removeProduct(${product.id})">Supprimer</button>
+        <button type="button" class="btn btn-custom btn-sm" onclick="removeProduct(${product.id})">Supprimer</button>
     </td>
 `;
 
@@ -365,14 +378,16 @@ reception.html<!DOCTYPE html>
                 id: product.id,
                 nom: product.nom,
                 prix: product.prix_de_vente,
+                quantite_cartons: product.unites_par_carton,
                 quantity: 1,  // Quantité initiale
             });
 
             // Optionnel : Appeler la fonction pour mettre à jour l'affichage du tableau
+            searchResults.innerHTML = '';
             renderSelectedProducts();
+            updateTotal();
         }
 
-        // Afficher les produits sélectionnés dans le tableau
         // Afficher les produits sélectionnés dans le tableau
         function renderSelectedProducts() {
             const tbody = document.getElementById('selectedProductsBody');
@@ -410,6 +425,7 @@ reception.html<!DOCTYPE html>
                         // Mettre à jour le total du produit dans le tableau
                         const totalPriceElement = event.target.closest('tr').querySelector('.total-price');
                         totalPriceElement.textContent = (product.prix * quantity).toFixed(2) + ' €';
+                        updateTotal();
                     }
                 }
             });
@@ -423,6 +439,7 @@ reception.html<!DOCTYPE html>
             if (index !== -1) {
                 selectedProducts.splice(index, 1);
                 renderSelectedProducts();
+                updateTotal();
             }
 
             // Supprimer la ligne du tableau
@@ -432,12 +449,37 @@ reception.html<!DOCTYPE html>
             }
         }
 
+        //fonction pour le total de la reception
+        // Exemple de fonction qui calcule le total
+        function totalReception() {
+            let total = 0;
+            selectedProducts.forEach(product => {
+                total += product.prix * product.quantity;
+            });
+            return total;
+        }
+
+        // Fonction pour mettre à jour l'affichage du total dans l'input
+        function updateTotal() {
+            const total = totalReception();
+            document.getElementById('total').value = total + ' €';
+        }
+
+        // Exemple d'appel dans la console
+        console.log('totalReception', totalReception());
+        // Puis mettez à jour le champ total dans le DOM
+        updateTotal();
+
+
+
         // Soumettre la réception des produits
         function addReception() {
             const supplierName = document.getElementById('supplierName').value;
+            console.log('supplierName', supplierName);
+            console.log('magasin', magasin);
 
             if (!supplierName) {
-                alert('Veuillez entrer le nom du fournisseur.');
+                Swal.fire('Erreur', 'Entrez le nom du fournisseur', 'error');
                 return;
             }
 
@@ -445,11 +487,12 @@ reception.html<!DOCTYPE html>
                 magasin: magasin,
                 fournisseur: supplierName,
                 produits: selectedProducts,
+                total: totalReception()
             };
 
             console.log('stockData', stockData);
 
-            fetch(`http://localhost:5000/receptions/add`, {
+            fetch('http://localhost:5000/reception/add', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -458,14 +501,25 @@ reception.html<!DOCTYPE html>
             })
                 .then(response => response.json())
                 .then(data => {
-                    alert('Réception ajoutée avec succès');
-                    document.getElementById('receptionForm').reset();
-                    selectedProducts.length = 0;
-                    renderSelectedProducts();
+                    console.log('Réponse du serveur:', data);
+                    if (data.message === 'Réception créée avec succès') {
+                        Swal.fire('Succès', 'Réception ajoutée avec succès', 'success');
+                        // Réinitialiser le formulaire
+                        document.getElementById('receptionForm').reset();
+                        document.getElementById('selectedProductsBody').innerHTML = '';
+                        document.getElementById('receptionFormContainer').style.display = 'none';
+                        selectedProducts.length = 0;
+                        updateTotal();
+                    } else {
+                        Swal.fire('Erreur', 'Erreur lors de l\'ajout de la réception', 'error');
+                    }
                 })
                 .catch(error => {
-                    console.error('Erreur lors de l\'ajout du stock:', error);
+                    console.error('Erreur lors de l\'ajout de la réception:', error);
+                    Swal.fire('Erreur', 'Erreur lors de l\'ajout de la réception', 'error');
                 });
+
+
         }
     </script>
 </body>

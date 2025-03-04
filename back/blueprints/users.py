@@ -16,13 +16,10 @@ def check_user():
 
 # Récupération de tous les utilisateurs (nécessite l'authentification)
 @users_bp.route('/', methods=['GET'])
-@jwt_required()
 def get_users():
-    current_user = get_jwt_identity()
-    if current_user['role'] != 'admin':
-        abort(403, description="Accès interdit. L'utilisateur n'est pas administrateur.")
-    
     users = User.query.all()
+    print('users', users)
+    
     return jsonify([{
         'id': u.id,
         'nom': u.nom,
@@ -51,31 +48,31 @@ def get_user(id):
     })
 
 # Mise à jour d'un utilisateur (nécessite l'authentification)
-@users_bp.route('/<int:id>', methods=['PUT'])
-@jwt_required()
+@users_bp.route('/update/<int:id>', methods=['PUT'])
 def update_user(id):
-    current_user = get_jwt_identity()
-    if current_user['role'] != 'admin' and current_user['id'] != id:
-        abort(403, description="Accès interdit.")
-
     u = User.query.get_or_404(id)
     data = request.get_json()
+
+    print(data)
 
     # Validation des données d'entrée
     if 'username' in data and not isinstance(data['username'], str):
         abort(400, description="L'username doit être une chaîne de caractères.")
+    
+    hashed_password = bcrypt.hashpw(data['password'].encode('utf-8'), bcrypt.gensalt())
+    u.password = hashed_password.decode('utf-8')
 
     u.nom = data.get('nom', u.nom)
     u.prenom = data.get('prenom', u.prenom)
     u.username = data.get('username', u.username)
     u.role = data.get('role', u.role)
-    u.magasin_id = data.get('magasin_id', u.magasin_id)
+    u.magasin_id = data.get('magasin', u.magasin_id)
 
     db.session.commit()
     return jsonify({'message': 'Utilisateur mis à jour avec succès'})
 
 # Suppression d'un utilisateur (nécessite l'authentification)
-@users_bp.route('/<int:id>', methods=['DELETE'])
+@users_bp.route('/delete/<int:id>', methods=['DELETE'])
 @jwt_required()
 def delete_user(id):
     current_user = get_jwt_identity()
@@ -134,12 +131,13 @@ def create_user():
     db.session.commit()
 
     return jsonify({
+        'message': 'Utilisateur ajouté avec succès',
+        'id': new_user.id,
         'nom': new_user.nom,
         'prenom': new_user.prenom,
         'username': new_user.username,
         'role': new_user.role,
-        'magasin_id': new_user.magasin_id,
-        'message': 'Utilisateur créé avec succès'
+        'magasin_id': new_user.magasin_id
     }), 201
 
 # Vérification du mot de passe lors de la connexion (POST)
@@ -162,7 +160,7 @@ def login_user():
         abort(401, description="Mot de passe incorrect.")
 
     print('Utilisateur connecté :', user.id)
-    access_token = create_access_token(identity=user.id)
+    access_token = create_access_token(identity=user.role)
     print('Access token :', access_token)
 
     return jsonify({

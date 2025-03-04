@@ -43,6 +43,18 @@ class Stock(db.Model):
     product = db.relationship('Product', backref='stock_items')
     magasin = db.relationship('Magasin', backref='stock_items')
 
+class Reception(db.Model):
+    __tablename__ = 'receptions'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
+    supplier = db.Column(db.String(100), nullable=False)
+    magasin_id = db.Column(db.Integer, db.ForeignKey('magasins.id'), nullable=False)
+    quantite = db.Column(db.Integer, nullable=False)  # en unités
+    montant = db.Column(db.Float, nullable=False)
+    date = db.Column(db.DateTime, default=datetime.now)
+    product = db.relationship('Product', backref='receptions')
+    magasin = db.relationship('Magasin', backref='receptions')
+
 class Sales(db.Model):
     __tablename__ = 'sales'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

@@ -6,112 +6,21 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
-
-        /* Arrière-plan animé */
+        /* Style personnalisé pour l'apparence générale */
         body {
             background: linear-gradient(135deg, #1f1c2c, #928dab);
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             font-family: 'Poppins', sans-serif;
-        }
-
-        /* Effet d'étoiles animées */
-        body::before {
-            content: "";
-            position: absolute;
-            width: 100vw;
-            height: 100vh;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1%, transparent 5%);
-            animation: moveStars 60s linear infinite;
-        }
-
-        @keyframes moveStars {
-            from {
-                transform: translate(-50%, -50%);
-            }
-
-            to {
-                transform: translate(50%, 50%);
-            }
+            color: white;
+            padding: 0;
+            display: flex;
+            margin: 0;
         }
 
         .container {
-            display: flex;
-            flex-direction: column;
-            /* Affichage en colonne, les éléments seront l'un sous l'autre */
-            justify-content: center;
-            align-items: center;
+            margin-top: 70px;
         }
 
-        .auth-container {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(15px);
-            padding: 40px;
-            width: 380px;
-            text-align: center;
-            color: white;
-            position: relative;
-            z-index: 1;
-            animation: fadeIn 1s ease-in-out;
-            margin-bottom: 30px;
-            /* Ajouter un espace entre le formulaire et le tableau */
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .auth-header {
-            font-size: 26px;
-            font-weight: 600;
-            margin-bottom: 20px;
-        }
-
-        /* Champs de saisie stylisés */
-        .form-group {
-            position: relative;
-            margin-bottom: 20px;
-        }
-
-        .form-control {
-            background: rgba(255, 255, 255, 0.15);
-            border: none;
-            color: white;
-            padding: 12px 15px 12px 45px;
-            border-radius: 10px;
-            width: 100%;
-            transition: 0.3s;
-            font-size: 16px;
-        }
-
-        .form-control:focus {
-            background: rgba(255, 255, 255, 0.25);
-            outline: none;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-        }
-
-        /* Icônes intégrées dans les champs */
-        .input-icon {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: rgba(255, 255, 255, 0.8);
-        }
-
+        /* Header */
         header {
             background-color: #343a40;
             padding: 10px 20px;
@@ -122,6 +31,7 @@
             z-index: 10;
             /* S'assure que le header est au-dessus des autres éléments */
         }
+
 
         header a {
             color: #fff;
@@ -135,7 +45,12 @@
             color: #ff6b6b;
         }
 
-        /* Bouton stylisé */
+
+        .card {
+            margin-bottom: 20px;
+            animation: slideIn 2s ease-in-out;
+        }
+
         .btn-custom {
             background: linear-gradient(135deg, #ff3d3d, #ff6b6b);
             color: white;
@@ -143,11 +58,9 @@
             padding: 12px;
             border-radius: 10px;
             font-weight: bold;
-            width: 100%;
             cursor: pointer;
             transition: all 0.3s ease-in-out;
             font-size: 16px;
-            box-shadow: 0 4px 10px rgba(255, 50, 50, 0.5);
         }
 
         .btn-custom:hover {
@@ -156,15 +69,16 @@
             box-shadow: 0 6px 15px rgba(255, 50, 50, 0.7);
         }
 
-        /* Lien stylisé */
-        .text-center a {
-            color: #ff3d3d;
-            text-decoration: none;
-            font-weight: 600;
-        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-100px);
+            }
 
-        .text-center a:hover {
-            text-decoration: underline;
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         table {
@@ -190,6 +104,10 @@
             font-weight: bold;
         }
 
+        th:hover {
+            color: #ff6b6b;
+        }
+
         td {
             background-color: #fff;
             /* Fond blanc pour les données */
@@ -198,102 +116,186 @@
             font-size: 16px;
         }
 
+
+
         tr:hover {
             background-color: #f1f1f1;
             /* Survol léger pour chaque ligne */
             cursor: pointer;
             /* Le curseur devient une main quand on survole */
         }
-
-        .product-row td {
-            transition: background-color 0.3s;
-            /* Animation pour le changement de couleur */
-        }
-
-        .product-row:hover td {
-            background-color: #f9f9f9;
-            /* Fond encore plus clair lors du survol */
-        }
     </style>
 </head>
 
 <body>
-    <header id="header" style="display: none;">
+    <header id="header">
         <a href="products.html">Produits</a>
+        <a href="employee_dashboard.html">Employés</a>
+        <a href="admin_dashboard.html">Admin</a>
         <a href="magasin.html">Magasins</a>
         <a href="register.html">Utilisateurs</a>
         <a href="logout.html" style="float: right;">Déconnexion</a>
+        <a href="reception.html">Receptions</a>
     </header>
 
     <!-- Formulaire d'inscription -->
     <div class="container">
-        <div class="auth-container">
-            <h2 class="auth-header">Inscription</h2>
-            <form id="registerForm">
-                <!-- Champs du formulaire -->
-                <div class="form-group mb-3">
-                    <label for="nom">Nom </label>
-                    <input type="text" class="form-control" id="nom" placeholder="Entrez votre nom" required>
-                </div>
-                <div class="form-group mb-3">
-                    <label for="prenom">Prénom</label>
-                    <input type="text" class="form-control" id="prenom" placeholder="Entrez votre prénom" required>
-                </div>
-                <div class="form-group mb-3">
-                    <label for="username">Nom d'utilisateur</label>
-                    <input type="text" class="form-control" id="username" placeholder="Choisissez un nom d'utilisateur"
-                        required>
-                </div>
-                <div class="form-group mb-3">
-                    <label for="password">Mot de passe</label>
-                    <input type="password" class="form-control" id="password" placeholder="Entrez votre mot de passe"
-                        required>
-                </div>
-                <div class="form-group mb-3">
-                    <label for="confirmPassword">Confirmer le mot de passe</label>
-                    <input type="password" class="form-control" id="confirmPassword"
-                        placeholder="Confirmez votre mot de passe" required>
-                </div>
-                <div class="form-group mb-3">
-                    <label for="role">Rôle</label>
-                    <select class="form-control" id="role">
-                        <option value="admin">Admin</option>
-                        <option value="manager">Manager</option>
-                        <option value="employee">Employé</option>
-                    </select>
-                </div>
-                <div class="form-group mb-3" id="magasinContainer" style="display: none;">
-                    <label for="magasin">Magasin</label>
-                    <select class="form-control" id="magasin">
-                        <option value="1">Magasin 1</option>
-                        <option value="2">Magasin 2</option>
-                        <option value="3">Magasin 3</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-custom w-100">S'inscrire</button>
-            </form>
-        </div>
+        <h2 class="auth-header">Inscription</h2>
+        <form id="registerForm">
+            <!-- Champs du formulaire -->
+            <div class="form-group mb-3">
+                <label for="nom">Nom </label>
+                <input type="text" class="form-control" id="nom" placeholder="Entrez votre nom" required>
+            </div>
+            <div class="form-group mb-3">
+                <label for="prenom">Prénom</label>
+                <input type="text" class="form-control" id="prenom" placeholder="Entrez votre prénom" required>
+            </div>
+            <div class="form-group mb-3">
+                <label for="username">Nom d'utilisateur</label>
+                <input type="text" class="form-control" id="username" placeholder="Choisissez un nom d'utilisateur"
+                    required>
+            </div>
+            <div class="form-group mb-3">
+                <label for="password">Mot de passe</label>
+                <input type="password" class="form-control" id="password" placeholder="Entrez votre mot de passe"
+                    required>
+            </div>
+            <div class="form-group mb-3">
+                <label for="confirmPassword">Confirmer le mot de passe</label>
+                <input type="password" class="form-control" id="confirmPassword"
+                    placeholder="Confirmez votre mot de passe" required>
+            </div>
+            <div class="form-group mb-3">
+                <label for="role">Rôle</label>
+                <select class="form-control" id="role">
+                    <option value="admin">Admin</option>
+                    <option value="manager">Manager</option>
+                    <option value="employee">Employé</option>
+                </select>
+            </div>
+            <div class="form-group mb-3" id="magasinContainer" style="display: none;">
+                <label for="user">Magasin</label>
+                <select class="form-control" id="user">
+                    <!-- Les magasins seront ajoutés ici dynamiquement -->
+                </select>
+            </div>
+            <button type="submit" class="btn btn-custom" id="addbutton" style="display: block;">Ajouter
+                l'utilisateur</button>
+            <button type="submit" class="btn btn-custom" id="updateButton" style="display:none;">Mettre à jour
+                l'utilisateur</button>
 
-        <!-- Tableau des utilisateurs (affiché uniquement si l'utilisateur est connecté) -->
-        <div class="container" id="usersTableContainer" style="display: none;">
-            <table id="usersTable">
-                <thead>
-                    <tr>
-                        <th>Nom</th>
-                        <th>Prénom</th>
-                        <th>Nom d'utilisateur</th>
-                        <th>Rôle</th>
-                        <th>Magasin</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Les lignes des utilisateurs seront ajoutées ici -->
-                </tbody>
-            </table>
-        </div>
+        </form>
+        <!-- Tableau des magasins -->
+        <table class="table table-dark table-striped table-hover text-center">
+            <caption class="text-light">Liste des utilisateurs</caption>
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Prénom</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Rôle</th>
+                    <th scope="col">Magasin</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="usersTableBody">
+                <!-- Les magasins seront ajoutés ici dynamiquement -->
+            </tbody>
+        </table>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
+
+        function loadMagasins() {
+            fetch('http://localhost:5000/magasins') // Remplacez l'URL avec celle de votre API pour récupérer les magasins
+                .then(response => response.json())
+                .then(magasins => {
+                    const magasinSelect = document.getElementById('user'); // L'élément select
+                    magasinSelect.innerHTML = ''; // Réinitialise les options précédentes
+
+                    if (magasins.length === 0) {
+                        magasinSelect.innerHTML = `
+                    <option value="">Aucun magasin disponible</option>
+                `;
+                    } else {
+                        magasins.forEach(magasin => {
+                            const option = document.createElement('option');
+                            option.value = magasin.id; // Assurez-vous que "id" est bien l'ID du magasin
+                            option.textContent = magasin.nom; // "nom" est le nom du magasin
+                            magasinSelect.appendChild(option);
+                        });
+                    }
+
+                    // Si le rôle sélectionné est 'manager' ou 'employee', afficher le magasin
+                    const role = document.getElementById('role').value;
+                    if (role === 'manager' || role === 'employee') {
+                        document.getElementById('magasinContainer').style.display = 'block';
+                    } else {
+                        document.getElementById('magasinContainer').style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    Swal.fire('Erreur', 'Impossible de charger les magasins.', 'error');
+                });
+        }
+
+        // Appel de la fonction loadMagasins lors du chargement de la page ou lors de la modification du rôle
+        document.getElementById('role').addEventListener('change', loadMagasins);
+
+        // Appel initial lors du chargement de la page
+        loadMagasins();
+
+        function afficherUsers() {
+            fetch('http://localhost:5000/users')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('data', data);
+                    const magasinsTableBody = document.getElementById('usersTableBody');
+                    magasinsTableBody.innerHTML = '';
+
+                    if (data.length === 0) {
+                        magasinsTableBody.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="text-center" style="color: #ff6b6b; font-size: 18px; font-weight: bold;">
+                                Aucun magasin trouvé.
+                            </td>
+                        </tr>
+                    `;
+                    } else {
+                        data.forEach(user => {
+                            const row = document.createElement('tr');
+                            row.id = `user-${user.id}`;
+
+                            row.innerHTML = `
+                        <td>${user.nom}</td>
+                        <td>${user.prenom}</td>
+                        <td>${user.username}</td>
+                        <td>${user.role}</td>
+                        <td>${user.magasin_id ? `Magasin ${user.magasin_id}` : 'N/A'}</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm" onclick="editUser(${user.id})">Éditer</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteUser(${user.id})">Supprimer</button>
+                        </td>
+                    `;
+                            magasinsTableBody.appendChild(row);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    Swal.fire('Erreur', 'Impossible de charger les magasins.', 'error');
+                });
+        }
+
+        window.onload = function () {
+            checkUserAuthentication();  // Vérifie l'authentification de l'utilisateur
+            afficherUsers();  // Affiche les utilisateurs
+        };
+
+
         function checkUserAuthentication() {
             var token = localStorage.getItem('token'); // Récupérer le token d'authentification
             console.log('token', token);
@@ -301,18 +303,16 @@
             if (token && token !== 'undefined') {
                 // Si le token est présent, afficher le header et le tableau des utilisateurs
                 document.getElementById('header').style.display = 'block';
-                document.getElementById('usersTableContainer').style.display = 'block';
+
             } else {
                 // Sinon, cacher le header et le tableau
                 document.getElementById('header').style.display = 'none';
-                document.getElementById('usersTableContainer').style.display = 'none';
+
             }
         }
 
-        // Appeler la fonction de vérification lorsque la page est chargée
-        window.onload = checkUserAuthentication;
 
-        // Afficher le champ magasin si le rôle est manager ou employé
+        // Afficher le champ user si le rôle est manager ou employé
         document.getElementById('role').addEventListener('change', function () {
             var magasinContainer = document.getElementById('magasinContainer');
             magasinContainer.style.display = (this.value === 'manager' || this.value === 'employee') ? 'block' : 'none';
@@ -329,11 +329,11 @@
             var password = document.getElementById('password').value;
             var confirmPassword = document.getElementById('confirmPassword').value;
             var role = document.getElementById('role').value;
-            var magasin = (role === 'manager' || role === 'employee') ? document.getElementById('magasin').value : null;
+            var user = (role === 'manager' || role === 'employee') ? document.getElementById('user').value : null;
 
             // Vérifier si les mots de passe correspondent
             if (password !== confirmPassword) {
-                alert('Les mots de passe ne correspondent pas.');
+                Swal.fire('Erreur', 'Les mots de passe ne correspondent pas', 'error');
                 return;
             }
 
@@ -344,7 +344,7 @@
                 username: username,
                 password: password,
                 role: role,
-                magasin_id: magasin
+                magasin_id: user
             };
 
             // Requête fetch pour enregistrer l'utilisateur
@@ -355,32 +355,29 @@
                 },
                 body: JSON.stringify(formData)
             })
-                .then(response => response.text())  // Utiliser .text() pour vérifier la réponse brute
+                .then(response => response.json())
                 .then(data => {
-                    console.log("Réponse brute du serveur : ", data);  // Afficher la réponse brute
-                    try {
-                        const jsonData = JSON.parse(data);  // Essayer de convertir en JSON
-                        console.log("Réponse JSON du serveur : ", jsonData);  // Afficher la réponse JSON
-                        if (jsonData.message === 'Utilisateur créé avec succès') {
-                            window.location.href = 'login.html'; // Redirection vers la page de connexion
-                        } else {
-                            alert('Erreur : ' + jsonData.message);
-                        }
-                    } catch (error) {
-                        console.error("Erreur lors de la conversion en JSON : ", error);
-                        alert('Une erreur est survenue.');
+                    console.log('Réponse:', data);
+                    if (data.message === 'Utilisateur ajouté avec succès') {
+                        Swal.fire('Succès', 'Utilisateur mis à jour.', 'success');
+
+                        document.getElementById('registerForm').reset();
+                        document.getElementById('updateButton').style.display = 'none';
+                        document.getElementById('addbutton').style.display = 'block';
+                        afficherUsers();
+                    } else {
+                        Swal.fire('Erreur', 'Échec de la mise à jour.', 'error');
                     }
                 })
                 .catch(error => {
-                    console.error('Erreur de soumission du formulaire :', error);
-                    alert('Une erreur est survenue.');
+                    console.error('Erreur:', error);
+                    Swal.fire('Erreur', 'Une erreur est survenue.', 'error');
                 });
 
         });
 
-        // Fonction d'édition d'un utilisateur
-        // Fonction d'édition d'un utilisateur
         function editUser(userId) {
+            console.log('userId', userId);
             const userRow = document.querySelector(`#user-${userId}`);
             const nomRow = userRow.querySelector('td:nth-child(1)');
             const prenomRow = userRow.querySelector('td:nth-child(2)');
@@ -388,105 +385,84 @@
             const roleRow = userRow.querySelector('td:nth-child(4)');
             const magasinRow = userRow.querySelector('td:nth-child(5)');
 
-            // Pré-remplir le formulaire avec les données existantes
+            console.log('Rôle récupéré:', roleRow.textContent.trim());
+            console.log('Magasin récupéré:', magasinRow.textContent.trim());
+
+
+            // Pré-remplissage du formulaire
             document.getElementById('nom').value = nomRow.textContent;
             document.getElementById('prenom').value = prenomRow.textContent;
             document.getElementById('username').value = usernameRow.textContent;
             document.getElementById('role').value = roleRow.textContent.trim();
+
+            // Si le rôle implique la sélection d'un magasin, afficher le conteneur et charger la sélection
             if (roleRow.textContent.trim() === 'manager' || roleRow.textContent.trim() === 'employee') {
                 document.getElementById('magasinContainer').style.display = 'block';
-                document.getElementById('magasin').value = magasinRow.textContent.trim();
+                // Si nécessaire, vous pouvez recharger les magasins pour être sûr que la liste est à jour
+                loadMagasins();
+            
+                document.getElementById('user').value = magasinRow.textContent.trim();
             } else {
                 document.getElementById('magasinContainer').style.display = 'none';
             }
 
-            // Modifier l'action du formulaire pour l'édition
-            document.getElementById('registerForm').addEventListener('submit', function (event) {
-                event.preventDefault(); // Empêche le rechargement de la page
+            // Affichage des boutons d'édition/mise à jour
+            document.getElementById('updateButton').style.display = 'block';
+            document.getElementById('addbutton').style.display = 'none';
 
-                // Récupération des valeurs
-                var nom = document.getElementById('nom').value;
-                var prenom = document.getElementById('prenom').value;
-                var username = document.getElementById('username').value;
-                var password = document.getElementById('password').value;
-                var confirmPassword = document.getElementById('confirmPassword').value;
-                var role = document.getElementById('role').value;
-                var magasin = (role === 'manager' || role === 'employee') ? document.getElementById('magasin').value : null;
+            // Mise à jour lors du clic sur le bouton "Mettre à jour"
+            document.getElementById('updateButton').onclick = function (event) {
+                event.preventDefault();
+                const nom = document.getElementById('nom').value;
+                const prenom = document.getElementById('prenom').value;
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                const role = document.getElementById('role').value;
+                const magasin = document.getElementById('user').value;
 
-                // Vérifier si les mots de passe correspondent
+                // Vérification des mots de passe
                 if (password !== confirmPassword) {
                     alert('Les mots de passe ne correspondent pas.');
                     return;
                 }
 
-                // Objet JSON à envoyer au serveur
-                var formData = {
-                    nom: nom,
-                    prenom: prenom,
-                    username: username,
-                    password: password,
-                    role: role,
-                    magasin_id: magasin
-                };
-
-                // Requête fetch pour modifier l'utilisateur
-                fetch(`http://localhost:5000/users/${userId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.message === 'Utilisateur mis à jour avec succès') {
-                            // Mettre à jour les valeurs dans le tableau
-                            nomRow.textContent = nom;
-                            prenomRow.textContent = prenom;
-                            usernameRow.textContent = username;
-                            roleRow.textContent = role;
-                            if (magasin) {
+                // Vérification de tous les champs ; si le rôle est "admin", vous pouvez ne pas vérifier le magasin
+                if (nom && prenom && username && role && password && confirmPassword && ((role === 'manager' || role === 'employee') ? magasin : true)) {
+                    fetch(`http://localhost:5000/users/update/${userId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ nom, prenom, username, role, magasin, password })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.message === 'Utilisateur mis à jour avec succès') {
+                                nomRow.textContent = nom;
+                                prenomRow.textContent = prenom;
+                                usernameRow.textContent = username;
+                                roleRow.textContent = role;
                                 magasinRow.textContent = magasin;
+                                Swal.fire('Succès', 'Utilisateur mis à jour.', 'success');
+                                afficherUsers();
+                                document.getElementById('registerForm').reset();
+                                document.getElementById('updateButton').style.display = 'none';
+                                document.getElementById('addbutton').style.display = 'block';
+                            } else {
+                                Swal.fire('Erreur', 'Échec de la mise à jour.', 'error');
                             }
-
-                            alert('Utilisateur mis à jour avec succès');
-                        } else {
-                            alert('Erreur : ' + data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Erreur de soumission du formulaire :', error);
-                        alert('Une erreur est survenue.');
-                    });
-            });
+                        })
+                        .catch(error => {
+                            console.error('Erreur:', error);
+                            Swal.fire('Erreur', 'Une erreur est survenue.', 'error');
+                        });
+                } else {
+                    Swal.fire('Erreur', 'Veuillez remplir tout les champs', 'error');
+                }
+            };
         }
 
-
-        // Fonction de suppression d'un utilisateur
-        function deleteUser(userId) {
-            if (confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")) {
-                fetch(`http://localhost:5000/users/delete/${userId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.message === 'Utilisateur supprimé avec succès') {
-                            const userRow = document.querySelector(`#user-${userId}`);
-                            userRow.remove(); // Suppression de la ligne dans le tableau
-                            alert('Utilisateur supprimé avec succès');
-                        } else {
-                            alert('Erreur lors de la suppression de l\'utilisateur');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Erreur de suppression :', error);
-                        alert('Une erreur est survenue lors de la suppression de l\'utilisateur');
-                    });
-            }
-        }
 
     </script>
 

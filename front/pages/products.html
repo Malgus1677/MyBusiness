@@ -1,117 +1,25 @@
+<!DOCTYPE html>
+<html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ajouter un produit</title>
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Styles similaires à ceux de votre formulaire d'inscription */
+        /* Style personnalisé pour l'apparence générale */
         body {
             background: linear-gradient(135deg, #1f1c2c, #928dab);
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             font-family: 'Poppins', sans-serif;
+            color: white;
+            padding: 0;
+            display: flex;
+            margin: 0;
         }
 
         .container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-
-        .auth-container {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(15px);
-            padding: 40px;
-            width: 380px;
-            text-align: center;
-            color: white;
-        }
-
-        .auth-header {
-            font-size: 26px;
-            font-weight: 600;
-            margin-bottom: 20px;
-        }
-
-        .form-group {
-            position: relative;
-            margin-bottom: 20px;
-        }
-
-        .form-control {
-            background: rgba(255, 255, 255, 0.15);
-            border: none;
-            color: white;
-            padding: 12px 15px 12px 45px;
-            border-radius: 10px;
-            width: 100%;
-        }
-
-        .btn-custom {
-            background: linear-gradient(135deg, #ff3d3d, #ff6b6b);
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 10px;
-            font-weight: bold;
-            width: 100%;
-            cursor: pointer;
-        }
-
-        /* Styles pour le tableau */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            /* Fusionne les bordures des cellules */
-            margin-top: 20px;
-        }
-
-        th,
-        td {
-            padding: 12px;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
-            /* Bordure légère sous chaque ligne */
-        }
-
-        th {
-            background-color: #f4f4f4;
-            /* Fond gris clair pour l'en-tête */
-            color: #333;
-            /* Texte noir pour l'en-tête */
-            font-weight: bold;
-        }
-
-        td {
-            background-color: #fff;
-            /* Fond blanc pour les données */
-            color: #555;
-            /* Couleur de texte plus sombre pour les données */
-            font-size: 16px;
-        }
-
-        tr:hover {
-            background-color: #f1f1f1;
-            /* Survol léger pour chaque ligne */
-            cursor: pointer;
-            /* Le curseur devient une main quand on survole */
-        }
-
-        .product-row td {
-            transition: background-color 0.3s;
-            /* Animation pour le changement de couleur */
-        }
-
-        .product-row:hover td {
-            background-color: #f9f9f9;
-            /* Fond encore plus clair lors du survol */
+            margin-top: 70px;
         }
 
         /* Header */
@@ -140,8 +48,27 @@
         }
 
 
-        tr:hover {
-            background-color: #f1f1f1;
+        .card {
+            margin-bottom: 20px;
+            animation: slideIn 2s ease-in-out;
+        }
+
+        .btn-custom {
+            background: linear-gradient(135deg, #ff3d3d, #ff6b6b);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            font-size: 16px;
+        }
+
+        .btn-custom:hover {
+            background: linear-gradient(135deg, #ff6b6b, #ff3d3d);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 50, 50, 0.7);
         }
 
         @keyframes slideIn {
@@ -155,270 +82,261 @@
                 transform: translateX(0);
             }
         }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            /* Fusionne les bordures des cellules */
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            /* Bordure légère sous chaque ligne */
+        }
+
+        th {
+            background-color: #f4f4f4;
+            /* Fond gris clair pour l'en-tête */
+            color: #fff;
+            /* Texte noir pour l'en-tête */
+            font-weight: bold;
+        }
+
+        th:hover {
+            color: #ff3d3d;
+            /* Survol rouge pour l'en-tête */
+        }
+
+        td:hover {
+            color: #ff3d3d;
+            /* Survol rouge pour les données */
+        }
+
+        td {
+            background-color: #fff;
+            /* Fond blanc pour les données */
+            color: #fff;
+            /* Couleur de texte plus sombre pour les données */
+            font-size: 16px;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+            /* Survol léger pour chaque ligne */
+            cursor: pointer;
+            /* Le curseur devient une main quand on survole */
+        }
     </style>
 </head>
 
 <body>
     <header id="header">
         <a href="products.html">Produits</a>
+        <a href="employee_dashboard.html">Employés</a>
+        <a href="admin_dashboard.html">Admin</a>
         <a href="magasin.html">Magasins</a>
         <a href="register.html">Utilisateurs</a>
         <a href="logout.html" style="float: right;">Déconnexion</a>
-    </header>
+        <a href="reception.html">Receptions</a>
+      </header>
     <div class="container">
-        <div class="auth-container">
-            <h2 class="auth-header">Ajouter un produit</h2>
-            <form id="productForm">
-                <div class="form-group mb-3">
-                    <label for="nom">Nom du produit</label>
-                    <input type="text" class="form-control" id="nom" placeholder="Entrez le nom du produit" required>
-                </div>
-                <div class="form-group mb-3">
-                    <label for="prix">Prix d'achat</label>
-                    <input type="number" class="form-control" id="prix" placeholder="Entrez le prix d'achat" step="0.01"
-                        required>
-                </div>
-                <div class="form-group mb-3">
-                    <label for="unites_par_carton">Nombre d'unités par carton</label>
-                    <input type="number" class="form-control" id="unites_par_carton"
-                        placeholder="Entrez le nombre d'unités par carton" required>
-                </div>
-                <button type="submit" class="btn btn-custom w-100">Ajouter le produit</button>
-            </form>
-        </div>
+        <h2>Ajouter un produit</h2>
+        <form id="productForm">
+            <div class="form-group mb-3">
+                <label for="nom">Nom du produit</label>
+                <input type="text" class="form-control" id="nom" placeholder="Entrez le nom du produit" required>
+            </div>
+            <div class="form-group mb-3">
+                <label for="prix">Prix d'achat</label>
+                <input type="number" class="form-control" id="prix" placeholder="Entrez le prix d'achat" step="0.01"
+                    required>
+            </div>
+            <div class="form-group mb-3">
+                <label for="unites_par_carton">Nombre d'unités par carton</label>
+                <input type="number" class="form-control" id="unites_par_carton"
+                    placeholder="Entrez le nombre d'unités par carton" required>
+            </div>
+            <button type="submit" class="btn btn-custom">Ajouter le produit</button>
+            <button type="submit" class="btn btn-custom" id="updateButton" style="display:none;">Mettre à jour</button>
+        </form>
+        <h1 class="text-center mb-4 mt-5">Liste des Produits</h1>
 
-        <!-- Tableau pour afficher les produits -->
-        <div class="auth-container" style="margin-top: 40px;">
-            <h2 class="auth-header">Liste des produits</h2>
-            <table class="table table-dark table-striped table-hover text-center">
-                <caption class="text-light">Liste des magasins</caption>
-                <thead class="thead-light">
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Nom</th>
-                        <th scope="col">Prix d'achat</th>
-                        <th scope="col">Unité par carton</th>
-                        <th scope="col">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="magasinsTableBody">
-                    <!-- Les magasins seront ajoutés ici dynamiquement -->
-                </tbody>
-            </table>
-        </div>
+        <!-- Tableau des products -->
+        <table class="table table-dark table-striped table-hover text-center">
+            <caption class="text-light">Liste des Produits</caption>
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Prix d'achat</th>
+                    <th scope="col">Unité par cartons</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="productsTableBody">
+                <!-- Les products seront ajoutés ici dynamiquement -->
+            </tbody>
+        </table>
     </div>
-    
-    <script>
-        document.getElementById('productForm').addEventListener('submit', function (event) {
-            event.preventDefault(); // Empêche le rechargement de la page
+</body>
 
-            // Récupération des valeurs du formulaire
-            var nom = document.getElementById('nom').value;
-            var prix = parseFloat(document.getElementById('prix').value);
-            var unites_par_carton = parseInt(document.getElementById('unites_par_carton').value);
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-            // Objet JSON à envoyer au serveur
-            var formData = {
-                nom: nom,
-                prix: prix,
-                unites_par_carton: unites_par_carton
-            };
+<script>
+    function afficherproducts() {
+        fetch('http://localhost:5000/products')
+            .then(response => response.json())
+            .then(data => {
+                const productsTableBody = document.getElementById('productsTableBody');
+                productsTableBody.innerHTML = '';
 
-            // Requête fetch pour ajouter le produit
-            fetch('http://localhost:5000/products/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.message === 'Produit ajouté avec succès') {
-                        alert('Produit ajouté avec succès');
-                        // Réinitialiser le formulaire après ajout
-                        document.getElementById('productForm').reset();
-                        // Recharger la liste des produits
-                        loadProducts();
-                    } else {
-                        alert('Erreur : ' + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Erreur de soumission du formulaire :', error);
-                    alert('Une erreur est survenue.');
-                });
-        });
+                if (data.length === 0) {
+                    productsTableBody.innerHTML = `
+                        <tr>
+                            <td colspan="3" class="text-center" style="color: #ff6b6b; font-size: 18px; font-weight: bold;">
+                                Aucun produit trouvé.
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    data.forEach(product => {
+                        console.log(product);
+                        const row = document.createElement('tr');
+                        row.id = `product-${product.id}`;
 
-        // Fonction pour charger les produits
-        function loadProducts() {
-            fetch('http://localhost:5000/products', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
+                        row.innerHTML = `
+                            <td>${product.nom}</td>
+                            <td>${product.prix}</td>
+                             <td>${product.unites_par_carton}</td>
+                            <td>
+                                <button class="btn btn-warning btn-sm" onclick="editproduct(${product.id})">Éditer</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteproduct(${product.id})">Supprimer</button>
+                            </td>
+                        `;
+                        productsTableBody.appendChild(row);
+                    });
                 }
             })
-                .then(response => response.json())
-                .then(data => {
-                    var tableBody = document.getElementById('productTableBody');
-                    tableBody.innerHTML = ''; // Efface les anciens produits
+            .catch(error => {
+                console.error('Erreur:', error);
+                Swal.fire('Erreur', 'Impossible de charger les products.', 'error');
+            });
+    }
 
-                    if (data.length === 0) {
-                        // Afficher un message stylisé si aucun produit
-                        tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="4" class="text-center" style="color: #ff6b6b; font-size: 18px; font-weight: bold;">
-                            Aucun produit trouvé.
-                        </td>
-                    </tr>
-                `;
-                    } else {
-                        // Afficher les produits si disponibles
-                        data.forEach((product, index) => {
-                            var row = document.createElement('tr');
-                            row.innerHTML = `
-        <td>${index + 1}</td>
-        <td>${product.nom}</td>
-        <td>${product.prix}</td>
-        <td>${product.unites_par_carton}</td>
-        <td>
-            <button class="btn btn-edit" onclick="editProduct(${product.id})">Éditer</button>
-            <button class="btn btn-delete" onclick="deleteProduct(${product.id})">Supprimer</button>
-        </td>
-    `;
-                            row.classList.add('product-row');  // Ajout d'une classe pour styliser chaque ligne
-                            document.getElementById('productTableBody').appendChild(row);
-                        });
-                    }
-                })
-                .catch(error => {
-                    console.error('Erreur de récupération des produits :', error);
-                    alert('Une erreur est survenue lors du chargement des produits.');
-                });
-        }
+    window.onload = afficherproducts;
 
-        function deleteProduct(productId) {
-            const confirmation = confirm('Êtes-vous sûr de vouloir supprimer ce produit ?');
-            if (confirmation) {
-                fetch(`http://localhost:5000/products/${productId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
+    document.getElementById('productForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        var nom = document.getElementById('nom').value;
+        var adresse = document.getElementById('adresse').value;
+
+        var formData = {
+            nom: nom,
+            adresse: adresse
+        };
+
+        fetch('http://localhost:5000/products/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === 'product ajouté avec succès') {
+                    document.getElementById('productForm').reset();
+                    afficherproducts();
+                    Swal.fire('Succès', 'product ajouté avec succès.', 'success');
+                } else {
+                    Swal.fire('Erreur', 'Échec de l\'ajout du product.', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                Swal.fire('Erreur', 'Une erreur est survenue.', 'error');
+            });
+    });
+
+    function deleteproduct(productId) {
+        Swal.fire({
+            title: "Êtes-vous sûr ?",
+            text: "Cette action est irréversible !",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Oui, supprimer",
+            cancelButtonText: "Annuler"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`http://localhost:5000/products/delete/${productId}`, {
+                    method: 'DELETE'
                 })
                     .then(response => response.json())
                     .then(data => {
-                        if (data.success) {
-                            alert('Produit supprimé avec succès');
-                            // Vous pouvez ici rafraîchir la table ou supprimer la ligne de la vue
-                            document.getElementById('productTableBody').innerHTML = ''; // Clear table
-                            afficherProduits(); // Reload products after deletion
+                        if (data.message === 'product supprimé') {
+                            afficherproducts();
+                            Swal.fire('Supprimé', 'Le product a été supprimé.', 'success');
                         } else {
-                            alert('Erreur lors de la suppression du produit');
+                            Swal.fire('Erreur', 'Impossible de supprimer ce product.', 'error');
                         }
                     })
                     .catch(error => {
                         console.error('Erreur:', error);
-                        alert('Une erreur est survenue lors de la suppression du produit');
+                        Swal.fire('Erreur', 'Une erreur est survenue.', 'error');
                     });
             }
-        }
+        });
+    }
 
-        function editProduct(productId) {
+    function editproduct(productId) {
+        const productRow = document.querySelector(`#product-${productId}`);
+        const nameCell = productRow.querySelector('td:nth-child(1)');
+        const addressCell = productRow.querySelector('td:nth-child(2)');
 
-            const magasinRow = document.querySelector(`#product-${magasinId}`);
-            const nameCell = magasinRow.querySelector('td:nth-child(1)');
-            const priceCell = magasinRow.querySelector('td:nth-child(2)');
-            const unitsCell = magasinRow.querySelector('td:nth-child(3)');
+        document.getElementById('nom').value = nameCell.textContent;
+        document.getElementById('adresse').value = addressCell.textContent;
 
+        document.getElementById('updateButton').style.display = 'block';
+        document.getElementById('addbutton').style.display = 'none';
 
-            // Remplir les champs d'édition avec les valeurs actuelles du produit
-            const form = document.getElementById('productForm');
-            const productName = form.querySelector('#nom');
-            const productPrice = form.querySelector('#prix');
-            const productUnits = form.querySelector('#unites_par_carton');
+        document.getElementById('updateButton').onclick = function (event) {
+            event.preventDefault();
+            const newName = document.getElementById('nom').value;
+            const newAddress = document.getElementById('adresse').value;
 
-            productName.value = nameCell.textContent;
-            productPrice.value = priceCell.textContent;
-            productUnits.value = unitsCell.textContent;
-
-            const updateButton = form.querySelector('#updateButton');
-            updateButton.style.display = 'block';
-
-            const addButton = form.querySelector('#addbutton');
-            addButton.style.display = 'none';
-            // Vérification si l'utilisateur a saisi de nouvelles valeurs
-            updateButton.onclick = function () {
-                const newName = productName.value;
-                const newPrice = productPrice.value;
-                const newUnits = productUnits.value;
-
-                if (newName === nameCell.textContent && newPrice === priceCell.textContent && newUnits === unitsCell.textContent) {
-                    alert('Aucune modification détectée');
-                    return;
-                }
-
-                const formData = {
-                    nom: newName,
-                    prix: newPrice,
-                    unites_par_carton: newUnits
-                };
-
+            if (newName && newAddress) {
                 fetch(`http://localhost:5000/products/update/${productId}`, {
                     method: 'PUT',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(formData)
+                    body: JSON.stringify({ nom: newName, adresse: newAddress })
                 })
                     .then(response => response.json())
                     .then(data => {
-                        if (data.success) {
-                            alert('Produit mis à jour avec succès');
-                            // Réinitialiser le formulaire après la mise à jour
-                            form.reset();
-                            // Recharger la liste des produits
-                            loadProducts();
+                        if (data.message === 'product mis à jour avec succès') {
+                            afficherproducts();
+                            Swal.fire('Succès', 'product mis à jour.', 'success');
+                            document.getElementById('productForm').reset();
+                            document.getElementById('updateButton').style.display = 'none';
+                            document.getElementById('addbutton').style.display = 'block';
                         } else {
-                            alert('Erreur lors de la mise à jour du produit');
+                            Swal.fire('Erreur', 'Échec de la mise à jour.', 'error');
                         }
                     })
                     .catch(error => {
                         console.error('Erreur:', error);
-                        alert('Une erreur est survenue lors de la mise à jour du produit');
-                    });
-            };
-        }
-
-        function deleteProduct(productId) {
-            const confirmation = confirm('Êtes-vous sûr de vouloir supprimer ce produit ?');
-            if (confirmation) {
-                fetch(`http://localhost:5000/products/delete${productId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert('Produit supprimé avec succès');
-                            // Vous pouvez ici rafraîchir la table ou supprimer la ligne de la vue
-                            document.getElementById('productTableBody').innerHTML = ''; // Clear table
-                            loadProducts(); // Reload products after deletion
-                        } else {
-                            alert('Erreur lors de la suppression du produit');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Erreur:', error);
-                        alert('Une erreur est survenue lors de la suppression du produit');
+                        Swal.fire('Erreur', 'Une erreur est survenue.', 'error');
                     });
             }
-        }
-        // Charger les produits dès que la page est prête
-        window.onload = loadProducts;
-    </script>
-</body>
+        };
+    }
+</script>
 
 </html>

@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Employé</title>
+  <!-- Inclusion de Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.19/dist/sweetalert2.min.css" rel="stylesheet">
+
+  <style>
+    /* Style de base pour l'affichage général */
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #1f1c2c, #928dab);
+      color: white;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      justify-content: flex-start;
+      align-items: center;
+    }
+
+    .container {
+      width: 80%;
+      max-width: 1200px;
+      margin-top: 40px;
+      padding-bottom: 20px;
+      flex-grow: 1;
+    }
+
+    .product-list {
+      width: 100%;
+      padding: 0;
+      margin-top: 20px;
+      list-style-type: none;
+    }
+
+    .product-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #2d2d2d;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 15px;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .product-list li:hover {
+      background-color: #3e3e3e;
+      transform: translateY(-5px);
+    }
+
+    header {
+      background-color: #343a40;
+      padding: 10px 20px;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      left: 0;
+      z-index: 10;
+      /* S'assure que le header est au-dessus des autres éléments */
+    }
+
+
+    header a {
+      color: #fff;
+      font-size: 18px;
+      margin-right: 20px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    header a:hover {
+      color: #ff6b6b;
+    }
+
+    .product-list .product-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .product-list .product-info span {
+      font-size: 18px;
+    }
+
+    .product-list .product-info .price {
+      color: #ff6b6b;
+      font-size: 16px;
+    }
+
+    .product-list input[type="number"] {
+      width: 80px;
+      padding: 8px;
+      margin-left: 20px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      background-color: #333;
+      color: white;
+      font-size: 16px;
+    }
+
+    .product-list input[type="number"]:focus {
+      border-color: #ff6b6b;
+      outline: none;
+    }
+
+    .product-list .add-to-cart-btn {
+      background-color: #ff6b6b;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .product-list .add-to-cart-btn:hover {
+      background-color: #ff3d3d;
+      transform: scale(1.05);
+    }
+
+    /* Style pour le tableau des produits dans le panier */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    table th,
+    table td {
+      padding: 12px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+
+    table th {
+      background-color: #333;
+      color: #ff3d3d;
+      font-weight: bold;
+    }
+
+    table td {
+      background-color: #333;
+      color: #f4f4f4;
+      font-size: 16px;
+    }
+
+    table tr:hover {
+      background-color: #444;
+      color: #ff6b6b;
+    }
+
+    /* Style pour les boutons et autres interactions */
+    button {
+      cursor: pointer;
+    }
+
+    input[type="number"] {
+      font-size: 14px;
+      padding: 8px;
+      border-radius: 6px;
+      background-color: #333;
+      color: #fff;
+      border: 1px solid #ccc;
+    }
+
+    input[type="number"]:focus {
+      border-color: #ff6b6b;
+      outline: none;
+    }
+
+    .remove-btn {
+      color: red;
+      cursor: pointer;
+      font-weight: bold;
+      text-decoration: underline;
+    }
+
+    .remove-btn:hover {
+      color: #ff6b6b;
+    }
+
+    /* Style pour le message "Aucun produit trouvé" */
+    .empty-message {
+      text-align: center;
+      padding: 20px;
+      font-size: 18px;
+      color: #ccc;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100">
+  <header id="header">
+    <a href="products.html">Produits</a>
+    <a href="employee_dashboard.html">Employés</a>
+    <a href="admin_dashboard.html">Admin</a>
+    <a href="magasin.html">Magasins</a>
+    <a href="register.html">Utilisateurs</a>
+    <a href="logout.html" style="float: right;">Déconnexion</a>
+    <a href="reception.html">Receptions</a>
+  </header>
+
+  <div class="container mx-auto p-4">
+    <h1 class="text-2xl font-bold mb-4">Dashboard Employé</h1>
+
+    <!-- Formulaire de recherche de produit -->
+    <div class="mb-4">
+      <label for="searchProduct" class="block text-lg font-semibold">Recherche Produit</label>
+      <input type="text" id="searchProduct" class="w-full p-2 border border-gray-300 rounded-md"
+        placeholder="Rechercher un produit">
+      <ul id="productList" class="mt-2 space-y-2"></ul>
+    </div>
+
+    <!-- Table des produits ajoutés -->
+    <table class="min-w-full bg-white border border-gray-300">
+      <thead>
+        <tr>
+          <th class="py-2 px-4 border">Nom</th>
+          <th class="py-2 px-4 border">Quantité</th>
+          <th class="py-2 px-4 border">Prix Vente</th>
+          <th class="py-2 px-4 border">Prix Total</th>
+        </tr>
+      </thead>
+      <tbody id="productTable"></tbody>
+    </table>
+
+    <!-- Total -->
+    <div class="mt-4 flex justify-between items-center">
+      <span class="text-xl font-semibold">Total: <span id="totalPrice">0</span> €</span>
+      <button id="generatePdf" class="btn btn-primary">Générer PDF</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.19/dist/sweetalert2.all.min.js"></script>
+  <script>
+    const { jsPDF } = window.jspdf;
+    const productListElement = document.getElementById('productList');
+    const productTableElement = document.getElementById('productTable');
+    const totalPriceElement = document.getElementById('totalPrice');
+    const generatePdfButton = document.getElementById('generatePdf');
+    let cart = [];  // Tableau pour stocker les produits ajoutés
+
+    // Recherche de produit
+    document.getElementById('searchProduct').addEventListener('input', async function () {
+      const query = this.value;
+      if (query.length > 2) {
+        try {
+          const response = await axios.post('http://localhost:5000/products/search', {
+            nom: query
+          });
+
+          const products = response.data;
+          updateProductList(products);
+
+        } catch (error) {
+          console.error('Error fetching products:', error);
+          alert('Une erreur est survenue lors de la recherche des produits.');
+        }
+      } else {
+        updateProductList([]);
+      }
+    });
+
+    // Fonction pour mettre à jour la liste des produits
+    function updateProductList(products) {
+      if (products.length === 0) {
+        productListElement.innerHTML = '<li>Aucun produit trouvé.</li>';
+      } else {
+        productListElement.innerHTML = products.map(product => `
+          <li class="p-2 cursor-pointer border border-gray-200 rounded mt-1">
+            <span>${product.nom} - ${product.prix_de_vente} €</span>
+            <input type="number" id="quantity-${product.id}" class="ml-2 w-20" min="1" value="1" />
+            <button class="ml-2 btn btn-sm btn-primary" onclick="addProductToCart(${product.id}, '${product.nom}', ${product.prix_de_vente})">Ajouter</button>
+          </li>
+        `).join('');
+      }
+    }
+
+    // Ajouter un produit au panier
+    function addProductToCart(id, nom, prix) {
+      const quantityInput = document.getElementById(`quantity-${id}`);
+      const quantity = parseInt(quantityInput.value);
+
+      // Ajouter le produit au tableau du panier
+      const product = {
+        id,
+        nom,
+        prix,
+        quantity,
+        totalPrice: prix * quantity
+      };
+      cart.push(product);
+      updateCart();
+    }
+
+    // Mettre à jour le tableau du panier
+    function updateCart() {
+      productTableElement.innerHTML = cart.map(product => `
+        <tr>
+          <td>${product.nom}</td>
+          <td>${product.quantity}</td>
+          <td>${product.prix} €</td>
+          <td>${product.totalPrice} €</td>
+        </tr>
+      `).join('');
+
+      const total = cart.reduce((sum, product) => sum + product.totalPrice, 0);
+      totalPriceElement.innerText = total;
+    }
+
+    generatePdfButton.addEventListener('click', function () {
+      // Demander à l'utilisateur la méthode de paiement via SweetAlert
+      Swal.fire({
+        title: 'Sélectionnez la méthode de paiement',
+        input: 'radio',
+        inputOptions: {
+          '1': 'Carte bancaire',
+          '2': 'Espèces'
+        },
+        inputValidator: (value) => {
+          if (!value) {
+            return 'Vous devez sélectionner une méthode de paiement !';
+          }
+        },
+        confirmButtonText: 'Suivant',
+        showCancelButton: true,
+        cancelButtonText: 'Annuler',
+        allowOutsideClick: false
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const paiementSelectionne = result.value;
+          let montantEspèces = 0;
+          let sommeRendue = 0;
+
+          // Si paiement en espèces, demander le montant donné par le client
+          if (paiementSelectionne === "2") {
+            Swal.fire({
+              title: 'Montant en liquide',
+              input: 'number',
+              inputLabel: 'Entrez le montant que le client donne :',
+              inputPlaceholder: 'Montant en espèces',
+              inputAttributes: {
+                min: 0,
+                step: 0.01
+              },
+              confirmButtonText: 'Valider',
+              showCancelButton: true,
+              cancelButtonText: 'Annuler',
+              allowOutsideClick: false
+            }).then((cashResult) => {
+              if (cashResult.isConfirmed) {
+                montantEspèces = parseFloat(cashResult.value);
+                sommeRendue = montantEspèces - parseFloat(totalPriceElement.innerText);
+
+                // Générer le PDF après confirmation et envoi des données
+                generatePDF(paiementSelectionne, montantEspèces, sommeRendue);
+                sendSaleData(paiementSelectionne, montantEspèces, sommeRendue);
+              }
+            });
+          } else {
+            // Générer le PDF pour paiement par carte
+            generatePDF(paiementSelectionne);
+            sendSaleData(paiementSelectionne);
+          }
+        }
+      });
+    });
+
+    // Fonction pour générer le PDF
+    function generatePDF(paiementSelectionne, montantEspèces = 0, sommeRendue = 0) {
+      const doc = new jsPDF('p', 'mm', [80, 297]); // Page de 80mm de large et 297mm de haut (A4)
+
+      const margin = 10; // Marges du PDF
+      const lineHeight = 6; // Hauteur de chaque ligne de texte
+      let y = 10; // Position Y initiale
+
+      // Définir les couleurs et la police
+      doc.setTextColor(0, 0, 0); // Texte noir
+      doc.setDrawColor(0, 0, 0); // Couleur de ligne noire
+      doc.setFillColor(255, 255, 255); // Couleur de fond blanche
+
+      // Ajouter bordure supérieure
+      doc.setLineWidth(0.5);
+      doc.line(margin, y, 80 - margin, y); // Ligne en haut de la page
+      y += 5;
+
+      // Titre de la feuille de caisse
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(14);
+      doc.setTextColor(51, 51, 51); // Couleur gris pour le titre
+      doc.text('Feuille de caisse', margin, y);
+      y += lineHeight * 2; // Espacement après le titre
+
+      // Nom du magasin et coordonnées (centré)
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      doc.setTextColor(51, 51, 51);
+      doc.text('Nom du magasin', margin, y); // Remplacez par le nom réel du magasin
+      y += lineHeight;
+      doc.text('www.magasindemade.com', margin, y); // Remplacez par le site réel du magasin
+      y += lineHeight * 2;
+
+      // Ajouter une ligne de séparation horizontale
+      doc.setLineWidth(0.5);
+      doc.line(margin, y, 80 - margin, y);
+      y += 5;
+
+      // Détails des produits
+      cart.forEach((product, index) => {
+        doc.setFillColor(245, 245, 245); // Gris clair pour chaque produit
+        doc.rect(margin, y - 2, 80 - margin * 2, lineHeight + 2, 'F');
+
+        doc.setFontSize(10);
+        doc.setTextColor(0, 0, 0); // Texte noir
+        doc.text(`${product.nom}`, margin + 2, y); // Nom du produit
+        doc.text(`${product.quantity} x ${product.prix} €`, 40, y); // Quantité et prix
+        doc.text(`${product.totalPrice} €`, 70, y, { align: 'right' }); // Total par produit
+        y += lineHeight + 2;
+      });
+
+      // Ajouter une ligne de séparation horizontale
+      doc.setLineWidth(0.5);
+      doc.line(margin, y, 80 - margin, y);
+      y += 5;
+
+      // Total (en gras et couleur différente pour attirer l'attention)
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(0, 102, 204); // Couleur bleue pour le total
+      doc.text(`Total: ${totalPriceElement.innerText} €`, margin, y);
+      y += lineHeight * 2;
+
+      // Informations supplémentaires
+      doc.setFontSize(10);
+      doc.setTextColor(51, 51, 51); // Texte gris pour les informations supplémentaires
+      doc.text(`TVA incluse (20%)`, margin, y); // Adapté en fonction du taux de TVA
+      y += lineHeight;
+
+      // Méthode de paiement
+      if (paiementSelectionne === "1") {
+        doc.text(`Paiement: Carte bancaire`, margin, y);
+      } else {
+        doc.text(`Paiement: Espèces`, margin, y);
+        y += lineHeight;
+        doc.text(`Montant donné: ${montantEspèces} €`, margin, y);
+        y += lineHeight;
+        doc.text(`Somme rendue: ${sommeRendue.toFixed(2)} €`, margin, y);
+      }
+      y += lineHeight * 2;
+
+      // Ajouter une ligne de séparation horizontale
+      doc.setLineWidth(0.5);
+      doc.line(margin, y, 80 - margin, y);
+      y += 5;
+
+      // Date et heure (en bas de la page)
+      const date = new Date();
+      const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+      doc.setFontSize(8);
+      doc.setTextColor(153, 153, 153); // Couleur grise pour la date
+      doc.text(`Date: ${formattedDate}`, margin, y);
+
+      // Ajouter une ligne de séparation finale
+      y += lineHeight * 2;
+      doc.line(margin, y, 80 - margin, y);
+
+      // Options d'impression : ouverture de la page d'impression
+      doc.autoPrint(); // Cette fonction ouvre la page d'impression immédiatement
+      doc.save('facture.pdf'); // Sauvegarde du PDF en tant que fichier
+    }
+
+    // Fonction pour envoyer les données au back-end
+    function sendSaleData(paiementSelectionne, montantEspèces = 0, sommeRendue = 0) {
+      const saleData = {
+        products: cart.map(product => ({
+          nom: product.nom,
+          quantity: product.quantity,
+          prix: product.prix,
+          totalPrice: product.totalPrice
+        })),
+        totalPrice: totalPriceElement.innerText,
+        paymentMethod: paiementSelectionne === "1" ? 'Carte bancaire' : 'Espèces',
+        montantDonne: montantEspèces,
+        sommeRendue: sommeRendue
+      };
+
+      // Envoi des données au back-end
+      fetch('http://localhost:9000/api/sales', {  // Remplacez par l'URL de votre back-end
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(saleData)
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            console.log('Vente enregistrée avec succès');
+          } else {
+            console.error('Erreur lors de l\'enregistrement de la vente');
+          }
+        })
+        .catch(error => {
+          console.error('Erreur de réseau:', error);
+        });
+    }
+
+  </script>
+</body>
+
+</html>

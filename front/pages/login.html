@@ -161,6 +161,7 @@
     </div>
 
     <script>
+        
         document.getElementById('loginForm').addEventListener('submit', async function (event) {
             event.preventDefault();
 
@@ -177,7 +178,7 @@
             console.log('data',data);
 
             if (response.ok) {
-                localStorage.setItem('token', data.token);
+                localStorage.setItem('token', data.access_token);
                 localStorage.setItem('role', data.role);
                 localStorage.setItem('username', username);
                 localStorage.setItem('magasin', data.magasin_id);

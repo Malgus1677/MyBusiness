@@ -23,6 +23,7 @@ def search_products():
         'id': p.id,
         'nom': p.nom,
         'prix_de_vente': p.prix_de_vente,
+        'unites_par_carton': p.unites_par_carton
     } for p in products])
 
 @products_bp.route('/<int:id>', methods=['GET'])
@@ -37,36 +38,74 @@ def get_product(id):
         'unites_par_carton': p.unites_par_carton
     })
 
-@products_bp.route('/<int:id>', methods=['PUT'])
-def update_product(id):
-    p = Product.query.get_or_404(id)
-    data = request.get_json()
-    p.nom = data.get('nom', p.nom)
-    p.prix = data.get('prix', p.prix)
-    p.unites_par_carton = data.get('unites_par_carton', p.unites_par_carton)
-    db.session.commit()
-    return jsonify({'message': 'Product updated successfully'})
+from flask import request, jsonify
+from sqlalchemy.exc import SQLAlchemyError
 
-@products_bp.route('/<int:id>', methods=['DELETE'])
+@products_bp.route('/update/<int:id>', methods=['PUT'])
+def update_product(id):
+    try:
+        p = Product.query.get_or_404(id)
+        data = request.get_json()
+
+        # Validation des données
+        if not data.get('nom') or not isinstance(data.get('prix'), (int, float)) or not isinstance(data.get('unites_par_carton'), int):
+            return jsonify({'message': 'Invalid data. Ensure all fields are correct.'}), 400
+
+        # Mise à jour des attributs
+        p.nom = data.get('nom', p.nom)
+        p.prix = data.get('prix', p.prix)
+        p.unites_par_carton = data.get('unites_par_carton', p.unites_par_carton)
+
+        # Commit des changements
+        db.session.commit()
+
+        return jsonify({'message': 'product mis à jour avec succès'})
+    
+    except SQLAlchemyError as e:
+        db.session.rollback()  # Rollback en cas d'erreur SQL
+        return jsonify({'message': 'An error occurred while updating the product.', 'error': str(e)}), 500
+
+
+@products_bp.route('/delete/<int:id>', methods=['DELETE'])
 def delete_product(id):
-    p = Product.query.get_or_404(id)
-    db.session.delete(p)
-    db.session.commit()
-    return jsonify({'message': 'Product deleted successfully'})
+    try:
+        p = Product.query.get_or_404(id)
+        db.session.delete(p)
+        db.session.commit()
+        return jsonify({'message': 'product supprimé'})
+    
+    except SQLAlchemyError as e:
+        db.session.rollback()  # Rollback en cas d'erreur SQL
+        return jsonify({'message': 'An error occurred while deleting the product.', 'error': str(e)}), 500
+
 
 @products_bp.route('/add', methods=['POST'])
 def add_product():
-    data = request.get_json()
-    p = Product(
-        nom=data['nom'],
-        prix=data['prix'],
-        unites_par_carton=data['unites_par_carton']
-    )
+    try:
+        data = request.get_json()
 
-    prix_unitaire = p.prix / p.unites_par_carton
-    p.prix_de_vente = prix_unitaire + (prix_unitaire * (30 / 100))
-    p.prix_unitaire = prix_unitaire
+        # Validation des données
+        if not data.get('nom') or not isinstance(data.get('prix'), (int, float)) or not isinstance(data.get('unites_par_carton'), int):
+            return jsonify({'message': 'Invalid data. Ensure all fields are correct.'}), 400
+
+        # Création du produit
+        p = Product(
+            nom=data['nom'],
+            prix=data['prix'],
+            unites_par_carton=data['unites_par_carton']
+        )
+
+        # Calcul du prix unitaire et du prix de vente
+        prix_unitaire = p.prix / p.unites_par_carton
+        p.prix_de_vente = prix_unitaire + (prix_unitaire * (30 / 100))
+        p.prix_unitaire = prix_unitaire
+
+        # Ajout du produit à la base de données
+        db.session.add(p)
+        db.session.commit()
+
+        return jsonify({'message': 'product ajouté avec succès'})
     
-    db.session.add(p)
-    db.session.commit()
-    return jsonify({'message': 'Product added successfully'})
+    except SQLAlchemyError as e:
+        db.session.rollback()  # Rollback en cas d'erreur SQL
+        return jsonify({'message': 'An error occurred while adding the product.', 'error': str(e)}), 500

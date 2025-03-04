@@ -18,7 +18,7 @@
         }
 
         .container {
-            margin-top: 30px;
+            margin-top: 70px;
         }
 
         /* Header */
@@ -105,6 +105,10 @@
             font-weight: bold;
         }
 
+        th:hover{
+            color: #ff6b6b;
+        }
+
         td {
             background-color: #fff;
             /* Fond blanc pour les données */
@@ -113,6 +117,8 @@
             font-size: 16px;
         }
 
+        
+
         tr:hover {
             background-color: #f1f1f1;
             /* Survol léger pour chaque ligne */
@@ -120,25 +126,21 @@
             /* Le curseur devient une main quand on survole */
         }
 
-        .product-row td {
-            transition: background-color 0.3s;
-            /* Animation pour le changement de couleur */
-        }
-
-        .product-row:hover td {
-            background-color: #f9f9f9;
-            /* Fond encore plus clair lors du survol */
-        }
+        
+      
     </style>
 </head>
 
 <body>
     <header id="header">
         <a href="products.html">Produits</a>
+        <a href="employee_dashboard.html">Employés</a>
+        <a href="admin_dashboard.html">Admin</a>
         <a href="magasin.html">Magasins</a>
         <a href="register.html">Utilisateurs</a>
         <a href="logout.html" style="float: right;">Déconnexion</a>
-    </header>
+        <a href="reception.html">Receptions</a>
+      </header>
     <div class="container">
         <h1 class="text-center mb-4">Ajouter un Magasin</h1>
 
@@ -177,184 +179,160 @@
 
     </div>
 
-    <script>
-        // Fonction pour récupérer et afficher les magasins
-        function afficherMagasins() {
-            fetch('http://localhost:5000/magasins', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(response => response.json())
-                .then(data => {
-                    const magasinsTableBody = document.getElementById('magasinsTableBody');
-                    magasinsTableBody.innerHTML = ''; // Effacer la table avant la mise à jour
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-                    if (data.length === 0) {
-                        // Afficher un message stylisé si aucun magasin trouvé
-                        magasinsTableBody.innerHTML = `
-                    <tr>
-                        <td colspan="3" class="text-center" style="color: #ff6b6b; font-size: 18px; font-weight: bold;">
-                            Aucun magasin trouvé.
-                        </td>
-                    </tr>
-                `;
-                    } else {
-                        // Afficher les magasins si disponibles
-                        data.forEach(magasin => {
-                            console.log('magasin', magasin);
-                            const row = document.createElement('tr');
-                            row.id = `magasin-${magasin.id}`;  // Ajout de l'ID pour sélection facile
+<script>
+    function afficherMagasins() {
+        fetch('http://localhost:5000/magasins')
+            .then(response => response.json())
+            .then(data => {
+                const magasinsTableBody = document.getElementById('magasinsTableBody');
+                magasinsTableBody.innerHTML = '';
 
-                            row.innerHTML = `
-                       <td>${magasin.nom}</td>
-<td>${magasin.adresse}</td>
-<td>
-                            <button class="btn btn-warning btn-sm" onclick="editMagasin(${magasin.id})">Éditer</button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteMagasin(${magasin.id})">Supprimer</button>
-                        </td>
-
+                if (data.length === 0) {
+                    magasinsTableBody.innerHTML = `
+                        <tr>
+                            <td colspan="3" class="text-center" style="color: #ff6b6b; font-size: 18px; font-weight: bold;">
+                                Aucun magasin trouvé.
+                            </td>
+                        </tr>
                     `;
-                            magasinsTableBody.appendChild(row);
-                        });
-                    }
-                })
-                .catch(error => {
-                    console.error('Erreur:', error);
-                    alert('Une erreur est survenue lors de la récupération des magasins');
-                });
-        }
+                } else {
+                    data.forEach(magasin => {
+                        const row = document.createElement('tr');
+                        row.id = `magasin-${magasin.id}`;
 
-        // Récupérer les magasins dès le chargement de la page
-        window.onload = afficherMagasins;
-
-        // Fonction pour soumettre le formulaire
-        document.getElementById('magasinForm').addEventListener('submit', function (event) {
-            event.preventDefault();
-
-            var nom = document.getElementById('nom').value;
-            var adresse = document.getElementById('adresse').value;
-
-            var formData = {
-                nom: nom,
-                adresse: adresse
-            };
-
-            fetch('http://localhost:5000/magasins/add', {  // L'URL pour ajouter un magasin
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
+                        row.innerHTML = `
+                            <td>${magasin.nom}</td>
+                            <td>${magasin.adresse}</td>
+                            <td>
+                                <button class="btn btn-warning btn-sm" onclick="editMagasin(${magasin.id})">Éditer</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteMagasin(${magasin.id})">Supprimer</button>
+                            </td>
+                        `;
+                        magasinsTableBody.appendChild(row);
+                    });
+                }
             })
+            .catch(error => {
+                console.error('Erreur:', error);
+                Swal.fire('Erreur', 'Impossible de charger les magasins.', 'error');
+            });
+    }
+
+    window.onload = afficherMagasins;
+
+    document.getElementById('magasinForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        var nom = document.getElementById('nom').value;
+        var adresse = document.getElementById('adresse').value;
+
+        var formData = {
+            nom: nom,
+            adresse: adresse
+        };
+
+        fetch('http://localhost:5000/magasins/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message === 'Magasin ajouté avec succès') {
+                document.getElementById('magasinForm').reset();
+                afficherMagasins();
+                Swal.fire('Succès', 'Magasin ajouté avec succès.', 'success');
+            } else {
+                Swal.fire('Erreur', 'Échec de l\'ajout du magasin.', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            Swal.fire('Erreur', 'Une erreur est survenue.', 'error');
+        });
+    });
+
+    function deleteMagasin(magasinId) {
+        Swal.fire({
+            title: "Êtes-vous sûr ?",
+            text: "Cette action est irréversible !",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Oui, supprimer",
+            cancelButtonText: "Annuler"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`http://localhost:5000/magasins/delete/${magasinId}`, {
+                    method: 'DELETE'
+                })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.message === 'Magasin ajouté avec succès') {
-                        alert('Magasin ajouté avec succès');
-                        document.getElementById('magasinForm').reset();  // Réinitialiser le formulaire
-
-                        // Rafraîchir la liste des magasins
+                    if (data.message === 'Magasin supprimé') {
                         afficherMagasins();
+                        Swal.fire('Supprimé', 'Le magasin a été supprimé.', 'success');
                     } else {
-                        alert('Erreur lors de l\'ajout du magasin');
+                        Swal.fire('Erreur', 'Impossible de supprimer ce magasin.', 'error');
                     }
                 })
                 .catch(error => {
                     console.error('Erreur:', error);
-                    alert('Une erreur est survenue');
+                    Swal.fire('Erreur', 'Une erreur est survenue.', 'error');
                 });
+            }
         });
+    }
 
-        function editMagasin(magasinId) {
-            console.log('magasinId', magasinId);
-            const magasinRow = document.querySelector(`#magasin-${magasinId}`);
-            const nameCell = magasinRow.querySelector('td:nth-child(1)');
-            const addressCell = magasinRow.querySelector('td:nth-child(2)');
+    function editMagasin(magasinId) {
+        const magasinRow = document.querySelector(`#users-${magasinId}`);
+        const nameCell = magasinRow.querySelector('td:nth-child(1)');
+        const addressCell = magasinRow.querySelector('td:nth-child(2)');
 
-            // Trouver le formulaire
-            const form = document.querySelector('#magasinForm');
-            const nameInput = form.querySelector('#nom');
-            const addressInput = form.querySelector('#adresse');
+        document.getElementById('nom').value = nameCell.textContent;
+        document.getElementById('adresse').value = addressCell.textContent;
 
-            // Remplir les champs du formulaire avec les informations actuelles
-            nameInput.value = nameCell.textContent;
-            addressInput.value = addressCell.textContent;
+        document.getElementById('updateButton').style.display = 'block';
+        document.getElementById('addbutton').style.display = 'none';
 
-            // Afficher un bouton de mise à jour
-            const updateButton = form.querySelector('#updateButton');
-            updateButton.style.display = 'block';
+        document.getElementById('updateButton').onclick = function (event) {
+            event.preventDefault();
+            const newName = document.getElementById('nom').value;
+            const newAddress = document.getElementById('adresse').value;
 
-            const addButton = form.querySelector('#addbutton');
-            addButton.style.display = 'none';
-
-            // Ajouter un événement au bouton de mise à jour
-            updateButton.onclick = function (event) {
-                event.preventDefault();
-                const newName = nameInput.value;
-                const newAddress = addressInput.value;
-
-                if (newName && newAddress) {
-                    const updatedMagasin = {
-                        id: magasinId,
-                        nom: newName,
-                        adresse: newAddress
-                    };
-
-                    // Requête POST pour envoyer le magasin mis à jour
-                    fetch(`http://localhost:5000/magasins/update/${magasinId}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(updatedMagasin)
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.message === 'Magasin mis à jour avec succès') {
-                                // Mise à jour du tableau avec les nouvelles valeurs
-                                nameCell.textContent = newName;
-                                addressCell.textContent = newAddress;
-                                alert('Magasin mis à jour avec succès');
-                            } else {
-                                alert('Erreur de mise à jour du magasin');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Erreur:', error);
-                            alert('Une erreur est survenue lors de la mise à jour du magasin');
-                        });
-                }
-            };
-        }
-
-
-        function deleteMagasin(magasinId) {
-            if (confirm("Êtes-vous sûr de vouloir supprimer ce magasin ?")) {
-                fetch(`http://localhost:5000/magasins/delete/${magasinId}`, {
-                    method: 'DELETE',
+            if (newName && newAddress) {
+                fetch(`http://localhost:5000/magasins/update/${magasinId}`, {
+                    method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ nom: newName, adresse: newAddress })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === 'Magasin mis à jour avec succès') {
+                        afficherMagasins();
+                        Swal.fire('Succès', 'Magasin mis à jour.', 'success');
+                        document.getElementById('magasinForm').reset();
+                        document.getElementById('updateButton').style.display = 'none';
+                        document.getElementById('addbutton').style.display = 'block';
+                    } else {
+                        Swal.fire('Erreur', 'Échec de la mise à jour.', 'error');
                     }
                 })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.message === 'Magasin supprimé avec succès') {
-                            const magasinRow = document.querySelector(`#magasin-${magasinId}`);
-                            magasinRow.remove();
-                            alert('Magasin supprimé avec succès');
-                        } else {
-                            alert('Erreur lors de la suppression du magasin');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Erreur:', error);
-                        alert('Une erreur est survenue lors de la suppression du magasin');
-                    });
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    Swal.fire('Erreur', 'Une erreur est survenue.', 'error');
+                });
             }
-        }
+        };
+    }
+</script>
 
-    </script>
 </body>
 
 </html>

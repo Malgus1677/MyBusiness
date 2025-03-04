@@ -6,7 +6,6 @@ reception_bp = Blueprint('reception', __name__, url_prefix='/reception')
 @reception_bp.route('/add', methods=['POST'])
 def create_reception():
     data = request.get_json()
-    print(data)
     magasin = data.get('magasin')
     supplier = data.get('fournisseur')
     total = data.get('total')
@@ -17,7 +16,6 @@ def create_reception():
         print(product)
         product_id = product.get('id')
         quantite = product.get('quantity')
-        prix = product.get('prix')
         quantite_cartons = product.get('quantite_cartons')
 
         reception = Reception(

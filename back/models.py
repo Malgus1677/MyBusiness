@@ -55,15 +55,26 @@ class Reception(db.Model):
     product = db.relationship('Product', backref='receptions')
     magasin = db.relationship('Magasin', backref='receptions')
 
-class Sales(db.Model):
+class Sale(db.Model):
     __tablename__ = 'sales'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
     magasin_id = db.Column(db.Integer, db.ForeignKey('magasins.id'), nullable=False)
-    quantite = db.Column(db.Integer, nullable=False)  # en unités
-    montant = db.Column(db.Float, nullable=False)
+    total = db.Column(db.Float, nullable=False)
+    payment_method = db.Column(db.String(50), nullable=False)  # ex: 'Carte bancaire' ou 'Espèces'
+    montant_donne = db.Column(db.Float, nullable=False)
+    somme_rendue = db.Column(db.Float, nullable=False)
     date = db.Column(db.DateTime, default=datetime.now)
-    user = db.relationship('User', backref='sales')
-    product = db.relationship('Product', backref='sales')
+
     magasin = db.relationship('Magasin', backref='sales')
+    items = db.relationship('SaleItem', backref='sale', lazy=True, cascade="all, delete-orphan")
+
+
+class SaleItem(db.Model):
+    __tablename__ = 'sale_items'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    sale_id = db.Column(db.Integer, db.ForeignKey('sales.id'), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
+    quantite = db.Column(db.Integer, nullable=False)  # en unités
+    montant = db.Column(db.Float, nullable=False)  # montant pour ce produit (prix * quantite)
+
+    product = db.relationship('Product', backref='sale_items')

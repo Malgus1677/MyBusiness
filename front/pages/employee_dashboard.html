@@ -493,9 +493,9 @@
         montantDonne: montantEspèces,
         sommeRendue: sommeRendue
       };
-
+      console.log('Données de vente:', saleData);
       // Envoi des données au back-end
-      fetch('http://localhost:9000/api/sales', {  // Remplacez par l'URL de votre back-end
+      fetch('http://localhost:9000/sales/add', {  // Remplacez par l'URL de votre back-end
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

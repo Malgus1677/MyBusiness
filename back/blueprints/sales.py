@@ -84,48 +84,7 @@ def delete_sale(id):
         db.session.rollback()
         return jsonify({'message': 'An error occurred while deleting the sale.', 'error': str(e)}), 500
 
-@sales_bp.route('/api/sale', methods=['POST'])
+@sales_bp.route('/add', methods=['POST'])
 def add_sale():
-    try:
-        data = request.get_json()
-
-        # Validation des données
-        user_id = data.get('user_id')
-        product_id = data.get('product_id')
-        magasin_id = data.get('magasin_id')
-        quantity = data.get('quantite')
-        montant = data.get('montant')
-
-        if not user_id or not product_id or not magasin_id or not quantity or not montant:
-            return jsonify({"message": "Tous les champs sont requis."}), 400
-        if not isinstance(quantity, int) or quantity < 0:
-            return jsonify({"message": "La quantité doit être un entier positif."}), 400
-        if not isinstance(montant, (int, float)) or montant < 0:
-            return jsonify({"message": "Le montant doit être un nombre positif."}), 400
-
-        # Vérifier si l'utilisateur, le produit et le magasin existent
-        user = User.query.get(user_id)
-        if not user:
-            return jsonify({"message": "L'utilisateur spécifié n'existe pas."}), 404
-
-        product = Product.query.get(product_id)
-        if not product:
-            return jsonify({"message": "Le produit spécifié n'existe pas."}), 404
-
-        magasin = Magasin.query.get(magasin_id)
-        if not magasin:
-            return jsonify({"message": "Le magasin spécifié n'existe pas."}), 404
-
-        # Créer une nouvelle vente
-        sale = Sales(user_id=user_id, product_id=product_id, magasin_id=magasin_id, quantite=quantity, montant=montant, date=datetime.utcnow())
-
-        db.session.add(sale)
-        db.session.commit()
-
-        return jsonify({"message": "Sale added successfully"}), 201
-    
-    except SQLAlchemyError as e:
-        db.session.rollback()
-        return jsonify({"message": f"Erreur lors de l'ajout de la vente : {str(e)}"}), 500
-    except Exception as e:
-        return jsonify({"message": f"Erreur inattendue : {str(e)}"}), 500
+   data = request.get_json()
+   print(data)

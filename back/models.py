@@ -94,4 +94,4 @@ class SaleItem(db.Model):
     montant = db.Column(db.Float, nullable=False)  # Prix total (quantité * prix unitaire)
 
     product = db.relationship('Product', backref='sale_items')
-    sale = db.relationship('Sales', backref='sale_items')
+   

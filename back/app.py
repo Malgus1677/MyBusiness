@@ -8,6 +8,7 @@ from blueprints.magasins import magasins_bp
 from blueprints.users import users_bp
 from blueprints.reception import reception_bp
 from blueprints.sales import sales_bp
+from blueprints.analyse import analyse_bp
 from flask_jwt_extended import JWTManager
 
 app = Flask(__name__)
@@ -34,6 +35,7 @@ app.register_blueprint(magasins_bp)
 app.register_blueprint(users_bp)
 app.register_blueprint(reception_bp)
 app.register_blueprint(sales_bp)
+app.register_blueprint(analyse_bp)
 
 if __name__ == '__main__':
     print("Démarrage du serveur Flask...")

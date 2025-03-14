@@ -11,7 +11,8 @@ def get_products():
         'id': p.id,
         'nom': p.nom,
         'prix': p.prix,
-        'prix_de_vente': p.prix_de_vente,  # Appel de la méthode du modèle
+        'prix_de_vente': p.prix_de_vente, 
+        'prix_unitaire': p.prix_unitaire,
         'unites_par_carton': p.unites_par_carton
     } for p in products])
 
@@ -23,6 +24,7 @@ def search_products():
         'id': p.id,
         'nom': p.nom,
         'prix_de_vente': p.prix_de_vente,
+        'prix_unitaire': p.prix_unitaire,
         'unites_par_carton': p.unites_par_carton
     } for p in products])
 
@@ -83,23 +85,31 @@ def delete_product(id):
 def add_product():
     try:
         data = request.get_json()
+        print(data)
 
         # Validation des données
-        if not data.get('nom') or not isinstance(data.get('prix'), (int, float)) or not isinstance(data.get('unites_par_carton'), int):
+        if not data.get('nom') or not data.get('prix') or not data.get('unites_par_carton'):
             return jsonify({'message': 'Invalid data. Ensure all fields are correct.'}), 400
+
+        print(type(data['prix']))
+        print(type(data['unites_par_carton']))
+
 
         # Création du produit
         p = Product(
             nom=data['nom'],
-            prix=data['prix'],
-            unites_par_carton=data['unites_par_carton']
+            prix=float(data['prix']),
+            unites_par_carton=int(data['unites_par_carton'])
         )
 
         # Calcul du prix unitaire et du prix de vente
         prix_unitaire = p.prix / p.unites_par_carton
-        p.prix_de_vente = prix_unitaire + (prix_unitaire * (30 / 100))
+        p.prix_de_vente = round(float(prix_unitaire) + (float(prix_unitaire) * 0.30), 2)
         p.prix_unitaire = prix_unitaire
 
+        print(p.prix_de_vente)
+        print(prix_unitaire)
+        print(p)
         # Ajout du produit à la base de données
         db.session.add(p)
         db.session.commit()

@@ -198,13 +198,8 @@
 
 <body class="bg-gray-100">
   <header id="header">
-    <a href="products.html">Produits</a>
     <a href="employee_dashboard.html">Employés</a>
-    <a href="admin_dashboard.html">Admin</a>
-    <a href="magasin.html">Magasins</a>
-    <a href="register.html">Utilisateurs</a>
     <a href="logout.html" style="float: right;">Déconnexion</a>
-    <a href="reception.html">Receptions</a>
   </header>
 
   <div class="container mx-auto p-4">
@@ -226,6 +221,7 @@
           <th class="py-2 px-4 border">Quantité</th>
           <th class="py-2 px-4 border">Prix Vente</th>
           <th class="py-2 px-4 border">Prix Total</th>
+          <th class="py-2 px-4 border">Actions</th>
         </tr>
       </thead>
       <tbody id="productTable"></tbody>
@@ -249,6 +245,15 @@
     const totalPriceElement = document.getElementById('totalPrice');
     const generatePdfButton = document.getElementById('generatePdf');
     let cart = [];  // Tableau pour stocker les produits ajoutés
+
+    const magasin = localStorage.getItem('magasin');
+    if (!magasin) {
+      window.location.href = 'login.html';
+    }
+    const user_id = localStorage.getItem('id');
+    console.log('magasin', magasin);
+    console.log('user_id', user_id);
+
 
     // Recherche de produit
     document.getElementById('searchProduct').addEventListener('input', async function () {
@@ -300,6 +305,7 @@
         totalPrice: prix * quantity
       };
       cart.push(product);
+      document.getElementById('searchProduct').value = '';
       updateCart();
     }
 
@@ -311,11 +317,17 @@
           <td>${product.quantity}</td>
           <td>${product.prix} €</td>
           <td>${product.totalPrice} €</td>
+          <td><button class="remove-btn" onclick="removeProductFromCart(${product.id})">Supprimer</button></td>
         </tr>
       `).join('');
 
-      const total = cart.reduce((sum, product) => sum + product.totalPrice, 0);
-      totalPriceElement.innerText = total;
+      const total = parseFloat(cart.reduce((acc, product) => acc + product.totalPrice, 0), 2);
+      totalPriceElement.innerText = parseFloat(total).toFixed(2);
+    }
+
+    function removeProductFromCart(id) {
+      cart = cart.filter(product => product.id !== id);
+      updateCart();
     }
 
     generatePdfButton.addEventListener('click', function () {
@@ -470,48 +482,56 @@
       doc.setTextColor(153, 153, 153); // Couleur grise pour la date
       doc.text(`Date: ${formattedDate}`, margin, y);
 
-      // Ajouter une ligne de séparation finale
       y += lineHeight * 2;
       doc.line(margin, y, 80 - margin, y);
 
-      // Options d'impression : ouverture de la page d'impression
-      doc.autoPrint(); // Cette fonction ouvre la page d'impression immédiatement
-      doc.save('facture.pdf'); // Sauvegarde du PDF en tant que fichier
+      doc.autoPrint();
+      doc.save(`feuille-caisse-${formattedDate}.pdf`);
     }
 
     // Fonction pour envoyer les données au back-end
     function sendSaleData(paiementSelectionne, montantEspèces = 0, sommeRendue = 0) {
       const saleData = {
+        magasin_id: magasin,  
         products: cart.map(product => ({
+          id: product.id,  
           nom: product.nom,
           quantity: product.quantity,
           prix: product.prix,
           totalPrice: product.totalPrice
         })),
-        totalPrice: totalPriceElement.innerText,
+        user_id: user_id,  
+        totalPrice: parseFloat(totalPriceElement.innerText),
         paymentMethod: paiementSelectionne === "1" ? 'Carte bancaire' : 'Espèces',
-        montantDonne: montantEspèces,
+        montantDonne: paiementSelectionne === "1" ? parseFloat(totalPriceElement.innerText) : montantEspèces,
         sommeRendue: sommeRendue
       };
+
       console.log('Données de vente:', saleData);
-      // Envoi des données au back-end
-      fetch('http://localhost:9000/sales/add', {  // Remplacez par l'URL de votre back-end
+
+      fetch('http://localhost:5000/sales/add', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(saleData)
       })
         .then(response => response.json())
         .then(data => {
-          if (data.success) {
-            console.log('Vente enregistrée avec succès');
+          if (data.message === 'Vente enregistrée avec succès') {
+            Swal.fire('Succès', 'Vente enregistrée avec succès', 'success');
+            // Réinitialiser le panier
+            cart = [];
+            updateCart();
+            // Réinitialiser le formulaire de recherche
+            document.getElementById('searchProduct').value = '';
+            updateProductList([]);
+
           } else {
-            console.error('Erreur lors de l\'enregistrement de la vente');
+            Swal.fire('erreur', 'Erreur lors de l\'enregistrement:', 'error');
           }
         })
         .catch(error => {
-          console.error('Erreur de réseau:', error);
+          console.error('Erreur lors de l\'enregistrement de la vente:', error);
+          Swal.fire('Erreur', 'Une erreur est survenue lors de l\'enregistrement de la vente.', 'error');
         });
     }
 

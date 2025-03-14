@@ -136,12 +136,10 @@
 <body>
     <header id="header">
         <a href="products.html">Produits</a>
-        <a href="employee_dashboard.html">Employés</a>
         <a href="admin_dashboard.html">Admin</a>
         <a href="magasin.html">Magasins</a>
         <a href="register.html">Utilisateurs</a>
         <a href="logout.html" style="float: right;">Déconnexion</a>
-        <a href="reception.html">Receptions</a>
       </header>
     <div class="container">
         <h2>Ajouter un produit</h2>
@@ -196,7 +194,7 @@
                 if (data.length === 0) {
                     productsTableBody.innerHTML = `
                         <tr>
-                            <td colspan="3" class="text-center" style="color: #ff6b6b; font-size: 18px; font-weight: bold;">
+                            <td colspan="4" class="text-center" style="color: #ff6b6b; font-size: 18px; font-weight: bold;">
                                 Aucun produit trouvé.
                             </td>
                         </tr>
@@ -232,11 +230,14 @@
         event.preventDefault();
 
         var nom = document.getElementById('nom').value;
-        var adresse = document.getElementById('adresse').value;
+        var prix = document.getElementById('prix').value;
+        var unites_par_carton = document.getElementById('unites_par_carton').value;
+
 
         var formData = {
             nom: nom,
-            adresse: adresse
+            prix: prix,
+            unites_par_carton: unites_par_carton
         };
 
         fetch('http://localhost:5000/products/add', {

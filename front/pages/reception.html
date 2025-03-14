@@ -243,11 +243,7 @@ reception.html
 <body>
 
     <header id="header">
-        <a href="products.html">Produits</a>
-        <a href="employee_dashboard.html">Employés</a>
-        <a href="admin_dashboard.html">Admin</a>
-        <a href="magasin.html">Magasins</a>
-        <a href="register.html">Utilisateurs</a>
+        <a href="manager_dashboard.html">Tableau de bord</a>
         <a href="logout.html" style="float: right;">Déconnexion</a>
         <a href="reception.html">Receptions</a>
     </header>
@@ -299,6 +295,19 @@ reception.html
                 <button type="button" class="btn-custom" onclick="addReception()">Ajouter la réception</button>
             </form>
         </div>
+        <div id="receptionFormContainer" class="container">
+            <table id="selectedReceptionTable" class="table table-dark table-striped table-hover text-center">
+                <thead class="thead-light">
+                    <tr>
+                        <th class="col">Fournisseur</th>
+                        <th class="col">Prix</th>
+                        <th class="col">Date</th>
+                    </tr>
+                </thead>
+                <tbody id="receptionsTableBody">
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -314,6 +323,29 @@ reception.html
             document.getElementById('receptionFormContainer').style.display = 'block';
         });
 
+        function afficherReceptions(){
+            fetch('http://localhost:5000/reception')
+            .then(response => response.json())
+            .then(data => {
+                console.log('Réceptions:', data);
+                const receptionsTable = document.getElementById('receptionsTableBody');
+                receptionsTable.innerHTML = '';
+                data.forEach(reception => {
+                    console.log('reception', reception);
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${reception.supplier}</td>
+                        <td>${reception.total} €</td>
+                        <td>${reception.date}</td>
+                    `;
+                    receptionsTable.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('Erreur lors de la récupération des réceptions:', error);
+            });
+        }
+        window.onload = afficherReceptions;
         // Liste des produits sélectionnés
         const selectedProducts = [];
 
@@ -377,6 +409,7 @@ reception.html
             selectedProducts.push({
                 id: product.id,
                 nom: product.nom,
+                prix_unitaire: product.prix_unitaire,
                 prix: product.prix_de_vente,
                 quantite_cartons: product.unites_par_carton,
                 quantity: 1,  // Quantité initiale
@@ -502,7 +535,7 @@ reception.html
                 .then(response => response.json())
                 .then(data => {
                     console.log('Réponse du serveur:', data);
-                    if (data.message === 'Réception créée avec succès') {
+                    if (data.message === 'Réception enregistrée avec succès') {
                         Swal.fire('Succès', 'Réception ajoutée avec succès', 'success');
                         // Réinitialiser le formulaire
                         document.getElementById('receptionForm').reset();

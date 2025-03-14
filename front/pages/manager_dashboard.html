@@ -139,11 +139,7 @@
 </head>
 <body>
     <header id="header">
-        <a href="products.html">Produits</a>
-        <a href="employee_dashboard.html">Employés</a>
-        <a href="admin_dashboard.html">Admin</a>
-        <a href="magasin.html">Magasins</a>
-        <a href="register.html">Utilisateurs</a>
+        <a href="manager_dashboard.html">Tableau de Bord</a>
         <a href="logout.html" style="float: right;">Déconnexion</a>
         <a href="reception.html">Receptions</a>
       </header>
@@ -231,6 +227,18 @@
     </div>
 
     <script>
+        function analyse(){
+            fetch('http://localhost:5000/analyse')
+            .then(response => response.json())
+            .then(data => {
+                console.log('Réceptions:', data);
+            })
+            .catch(error => {
+                console.error('Erreur lors de la récupération des réceptions:', error);
+            });
+        }
+        window.onload = analyse;
+        
         // Données du graphique
         const ctx = document.getElementById('salesChart').getContext('2d');
         new Chart(ctx, {

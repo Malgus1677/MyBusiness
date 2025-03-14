@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from models import Sales, Product, User, Magasin, db
+from models import Sales, Product, User, Magasin, SaleItem, Stock, db
 from datetime import datetime
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -86,5 +86,52 @@ def delete_sale(id):
 
 @sales_bp.route('/add', methods=['POST'])
 def add_sale():
-   data = request.get_json()
-   print(data)
+    try:
+        data = request.get_json()
+        print(data)
+        
+        # Vérifier les données requises
+        if 'magasin_id' not in data or 'products' not in data or 'totalPrice' not in data:
+            return jsonify({'message': 'Données manquantes'}), 400
+
+        # Créer une nouvelle vente
+        new_sale = Sales(
+            magasin_id=data['magasin_id'],
+            total=data['totalPrice'],
+            user_id=data.get('user_id', None),
+            payment_method=data['paymentMethod'],
+            montant_donne=data.get('montantDonne', 0),
+            somme_rendue=data.get('sommeRendue', 0)
+        )
+        
+        db.session.add(new_sale)
+        db.session.flush()  # Permet de récupérer l'ID avant commit
+
+        # Ajouter les articles associés
+        for item in data['products']:
+            product = Product.query.get(item['id'])
+            if not product:
+                return jsonify({'message': f'Produit {item["id"]} introuvable'}), 404
+
+            sale_item = SaleItem(
+                sale_id=new_sale.id,
+                product_id=item['id'],
+                quantite=item['quantity'],
+                montant=item['totalPrice']
+            )
+            db.session.add(sale_item)
+
+            stock = Stock.query.filter_by(product_id=item['id'], magasin_id=data['magasin_id']).first()
+            if not stock:
+                return jsonify({'message': 'Stock introuvable'}), 404
+
+            # Mettre à jour le stock
+            stock.quantite -= item['quantity']
+            db.session.add(stock)
+
+        db.session.commit()
+        return jsonify({'message': 'Vente enregistrée avec succès', 'sale_id': new_sale.id}), 201
+
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        return jsonify({'message': 'Erreur lors de l\'enregistrement', 'error': str(e)}), 500

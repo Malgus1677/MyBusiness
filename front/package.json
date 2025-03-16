@@ -5,9 +5,7 @@
     "main": "main.js",
     "scripts": {
       "start": "electron .",
-      "build": "electron-packager ../front gestion-magasin --platform=win32 --arch=x64 --out=../back/dist/ && npm run copy-back-files",
-      "copy-back-files": "cp -r ../back/* ../back/dist/gestion-magasin/",
-      "clean": "rimraf dist"
+      "build": "electron-packager ../front gestion-magasin --platform=win32 --arch=x64 --out=../back/dist/ && npm run copy-back-files"
     },
     "build": {
       "appId": "com.mybusiness.app",

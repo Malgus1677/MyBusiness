@@ -16,7 +16,7 @@
         "static/**/*",
         "templates/**/*"
       ],
-      "productName": "Mybusiness",
+      "productName": "MyBusiness",
       "win": {
         "target": "nsis"
       },

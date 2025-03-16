@@ -4,19 +4,44 @@
     "description": "Application de gestion de magasin avec Electron et Flask",
     "main": "main.js",
     "scripts": {
-        "start": "electron .",
-        "build": "electron-packager . gestion-magasin --platform=win32 --arch=x64 --out=dist/",
-        "clean": "rimraf dist",
-        "build:css": "npx tailwindcss build src/styles.css -o dist/styles.css"
+      "start": "electron .",
+      "build": "electron-packager ../front gestion-magasin --platform=win32 --arch=x64 --out=../back/dist/ && npm run copy-back-files",
+      "copy-back-files": "cp -r ../back/* ../back/dist/gestion-magasin/",
+      "clean": "rimraf dist"
+    },
+    "build": {
+      "appId": "com.mybusiness.app",
+      "files": [
+        "**/*",
+        "../back/**/*", 
+        "static/**/*",
+        "templates/**/*"
+      ],
+      "productName": "Mybusiness",
+      "win": {
+        "target": "nsis"
+      },
+      "directories": {
+        "output": "../back/exe"
+      },
+      "publish": [
+        {
+          "provider": "github",
+          "owner": "Malgus1677",
+          "repo": "Mybusiness2"
+        }
+      ]
     },
     "dependencies": {
-        "axios": "^1.7.9",
-        "child_process": "^1.0.2",
-        "electron-store": "^8.1.0"
+      "axios": "^1.7.9",
+      "child_process": "^1.0.2",
+      "electron-store": "^8.1.0",
+      "electron-updater": "^6.3.9"
     },
     "devDependencies": {
-        "electron": "^34.3.0",
-        "electron-packager": "^17.1.1",
-        "rimraf": "^5.0.0"
+      "electron": "^34.3.0",
+      "electron-packager": "^17.1.1",
+      "rimraf": "^5.0.0"
     }
-}
+  }
+  

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +9,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* Style général du body */
-        html, body {
+        html,
+        body {
             height: 100%;
             margin: 0;
             padding: 0;
@@ -18,13 +20,13 @@
             flex-direction: column;
         }
 
-        /* Conteneur principal de la page */
+        /* Conteneur principal */
         .content {
             margin-left: 250px;
             padding: 20px;
             width: calc(100% - 250px);
             transition: margin-left 0.3s ease;
-            overflow-y: auto;  /* Permet de défiler si le contenu est trop grand */
+            overflow-y: auto;
         }
 
         /* Header */
@@ -45,7 +47,7 @@
             color: #ff6b6b;
         }
 
-        /* Style des cartes pour les statistiques */
+        /* Cartes statistiques */
         .card {
             text-align: center;
             animation: slideIn 2s ease-in-out;
@@ -61,6 +63,7 @@
                 opacity: 0;
                 transform: translateX(-100px);
             }
+
             to {
                 opacity: 1;
                 transform: translateX(0);
@@ -91,7 +94,6 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            /* Fusionne les bordures des cellules */
             margin-top: 20px;
         }
 
@@ -100,97 +102,125 @@
             padding: 12px;
             text-align: center;
             border-bottom: 1px solid #ddd;
-            /* Bordure légère sous chaque ligne */
         }
 
         th {
             background-color: #f4f4f4;
-            /* Fond gris clair pour l'en-tête */
             color: #333;
-            /* Texte noir pour l'en-tête */
             font-weight: bold;
         }
 
         td {
             background-color: #fff;
-            /* Fond blanc pour les données */
             color: #555;
-            /* Couleur de texte plus sombre pour les données */
             font-size: 16px;
         }
 
         tr:hover {
             background-color: #f1f1f1;
-            /* Survol léger pour chaque ligne */
             cursor: pointer;
-            /* Le curseur devient une main quand on survole */
         }
 
         .product-row td {
             transition: background-color 0.3s;
-            /* Animation pour le changement de couleur */
         }
 
         .product-row:hover td {
             background-color: #f9f9f9;
-            /* Fond encore plus clair lors du survol */
         }
     </style>
 </head>
+
 <body>
     <header id="header">
-        <a href="products.html">Produits</a>
-        <a href="admin_dashboard.html">Admin</a>
-        <a href="magasin.html">Magasins</a>
-        <a href="register.html">Utilisateurs</a>
+        <a href="admin_dashboard.html">Tableau de Bord</a>
         <a href="logout.html" style="float: right;">Déconnexion</a>
-      </header>
+        <a href="reception.html">Receptions</a>
+    </header>
 
     <div class="container mt-4">
-        <h1 class="text-center mb-4">Tableau de Bord Administrateur</h1>
+        <h1 class="text-center mb-4">Tableau de Bord Admin</h1>
 
-        <!-- Encadrés Statistiques -->
+        <!-- Cartes statistiques -->
         <div class="row mb-4">
-            <div class="col-md-4">
+            <div class="form-group mb-3" id="magasinContainer">
+                <label for="user">Magasin</label>
+                <select class="form-control" id="user">
+                    <!-- Les magasins seront ajoutés ici dynamiquement -->
+                    <option value="">choisir un magasin </option>
+                </select>
+            </div>
+            <div class="col-md-3">
                 <div class="card bg-success text-white">
                     <div class="card-body">
                         <h5 class="card-title">Gains</h5>
-                        <h2 id="gains">€ 12,450</h2>
+                        <h2 id="total_profit">€ 0</h2>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="card bg-warning text-dark">
                     <div class="card-body">
-                        <h5 class="card-title">Achats</h5>
-                        <h2 id="achats">€ 8,200</h2>
+                        <h5 class="card-title">Chiffre d'Affaires</h5>
+                        <h2 id="total_revenue">€ 0</h2>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card bg-primary text-white">
+            <div class="col-md-3">
+                <div class="card bg-info text-white">
                     <div class="card-body">
-                        <h5 class="card-title">Total</h5>
-                        <h2 id="total">€ 20,650</h2>
+                        <h5 class="card-title">Ventes</h5>
+                        <h2 id="total_sales">0</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-secondary text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Réceptions</h5>
+                        <h2 id="total_receptions">0</h2>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Graphique -->
+        <!-- Valeur du stock -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card bg-dark text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Valeur du Stock</h5>
+                        <h2 id="stock_value">€ 0</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Graphique des ventes quotidiennes -->
         <div class="card mb-4">
             <div class="card-body">
-                <h5 class="card-title">Évolution des ventes et achats</h5>
+                <h5 class="card-title">Ventes Quotidiennes</h5>
+                <!-- Sélection du filtre -->
+                <select id="timeFilter">
+                    <option value="day">Jour</option>
+                    <option value="week">Semaine</option>
+                    <option value="month">Mois</option>
+                </select>
+
+                <input type="date" id="datePicker" style="display: none;">
+                <input type="week" id="weekPicker" style="display: none;">
+                <input type="month" id="monthPicker" style="display: none;">
+
                 <canvas id="salesChart"></canvas>
             </div>
         </div>
 
-        <!-- Tableaux Top Ventes / Flop Produits -->
-        <div class="row">
+        <!-- Tableaux Top Produits et Magasins Performance -->
+        <div class="row mb-4">
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Top Ventes Produits</h5>
+                        <h5 class="card-title">Top Produits</h5>
                         <table class="table table-striped">
                             <thead>
                                 <tr>
@@ -198,9 +228,8 @@
                                     <th>Quantité Vendue</th>
                                 </tr>
                             </thead>
-                            <tbody id="topVentes">
-                                <tr><td>Produit A</td><td>120</td></tr>
-                                <tr><td>Produit B</td><td>98</td></tr>
+                            <tbody id="top_products">
+                                <!-- Les produits seront insérés ici -->
                             </tbody>
                         </table>
                     </div>
@@ -209,46 +238,299 @@
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Top Flop Produits</h5>
+                        <h5 class="card-title">Performances Magasins</h5>
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th>Produit</th>
-                                    <th>Quantité Vendue</th>
+                                    <th>Magasin</th>
+                                    <th>Chiffre d'Affaires</th>
                                 </tr>
                             </thead>
-                            <tbody id="topFlop">
-                                <tr><td>Produit X</td><td>5</td></tr>
-                                <tr><td>Produit Y</td><td>12</td></tr>
+                            <tbody id="magasins_performance">
+                                <!-- Les données seront insérées ici -->
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tableaux Best Employees et Period Analysis -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Meilleurs Employés</h5>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Nom</th>
+                                    <th>Prénom</th>
+                                    <th>Ventes</th>
+                                </tr>
+                            </thead>
+                            <tbody id="best_employees">
+                                <!-- Les données seront insérées ici -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Analyse Périodique</h5>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Période</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="period_analysis">
+                                <!-- Exemple : On peut afficher les ventes par mois ici -->
+                            </tbody>
+                        </table>
+                        <h6 class="mt-3">Ventes par Jour de la Semaine</h6>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Jour</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sales_by_weekday">
+                                <!-- Les données seront insérées ici -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- Indicateurs supplémentaires -->
+            <div class="row mt-4">
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Panier Moyen</h5>
+                            <h2 id="panier_moyen">€ 0</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-danger text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Rotation des Stocks</h5>
+                            <h2 id="rotation_des_stocks">0</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning text-dark">
+                        <div class="card-body">
+                            <h5 class="card-title">Délai Moyen Stockage</h5>
+                            <h2 id="delai_moyen_stockage">0</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Marge Bénéficiaire</h5>
+                            <h2 id="marge_beneficiaire">0%</h2>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    </div>
 
     <script>
-        // Données du graphique
-        const ctx = document.getElementById('salesChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'],
-                datasets: [
-                    {
-                        label: 'Gains',
-                        data: [4000, 5000, 6000, 6500, 7000, 7450],
-                        backgroundColor: 'rgba(40, 167, 69, 0.5)'
-                    },
-                    {
-                        label: 'Achats',
-                        data: [3000, 4000, 5000, 5200, 6000, 6200],
-                        backgroundColor: 'rgba(255, 193, 7, 0.5)'
+        function magasin() {
+            fetch('http://localhost:5000/magasins') // Remplacez l'URL avec celle de votre API pour récupérer les magasins
+                .then(response => response.json())
+                .then(magasins => {
+                    const magasinSelect = document.getElementById('user'); // L'élément select
+                    magasinSelect.innerHTML = ''; // Réinitialise les options précédentes
+
+                    if (magasins.length === 0) {
+                        magasinSelect.innerHTML = `
+                    <option value="">Aucun magasin disponible</option>
+                `;
+                    } else {
+                        magasinSelect.innerHTML = `
+                    <option value="">Choisir un magasin</option>
+                    <option value="all"> Choisir tout les magasins</option
+                `;
+                        magasins.forEach(magasin => {
+                            const option = document.createElement('option');
+
+                            option.value = magasin.id; // Assurez-vous que "id" est bien l'ID du magasin
+                            option.textContent = magasin.nom; // "nom" est le nom du magasin
+                            magasinSelect.appendChild(option);
+                        });
                     }
-                ]
+
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    Swal.fire('Erreur', 'Impossible de charger les magasins.', 'error');
+                });
+        }
+        // Sélectionne l'élément <select> avec l'id 'user'
+        const magasinSelect = document.getElementById('user');
+
+        // Ajoute un événement 'change' pour détecter la sélection du magasin
+        magasinSelect.addEventListener('change', function () {
+            // Récupère la valeur de l'option sélectionnée
+            const magasinId = magasinSelect.value;
+
+            // Affiche l'ID sélectionné dans la console (vous pouvez l'utiliser où vous en avez besoin)
+            console.log('ID du magasin sélectionné :', magasinId);
+            if (magasinId === null) {
+                const magasinId = 'all'
             }
+
+            analyse(magasinId)
+
         });
+
+
+
+        // Fonction de récupération et d'affichage des données
+        function analyse(magasinId = 'all') {
+            let url = `http://localhost:5000/analyse/total`; // URL par défaut pour 'all'
+
+            // Si magasinId est différent de 'all', on utilise l'ID du magasin dans l'URL
+            if (magasinId !== 'all') {
+                url = `http://localhost:5000/analyse/magasin/${magasinId}`;
+            }
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Données reçues:', data);
+
+                    // Mise à jour des cartes statistiques
+                    document.getElementById('total_revenue').innerText = '€ ' + data.total_revenue;
+                    document.getElementById('total_profit').innerText = '€ ' + data.total_profit;
+                    document.getElementById('total_sales').innerText = data.total_sales;
+                    document.getElementById('total_receptions').innerText = data.total_receptions;
+                    document.getElementById('stock_value').innerText = '€ ' + data.stock_value;
+                    document.getElementById('panier_moyen').innerText = '€ ' + data.additional_indicators.panier_moyen;
+                    document.getElementById('rotation_des_stocks').innerText = data.additional_indicators.rotation_des_stocks;
+                    document.getElementById('delai_moyen_stockage').innerText = data.additional_indicators.delai_moyen_stockage + ' jours';
+                    document.getElementById('marge_beneficiaire').innerText = data.additional_indicators.marge_beneficiaire + '%';
+
+                    // Remplissage du tableau Top Produits
+                    const topProductsTbody = document.getElementById('top_products');
+                    topProductsTbody.innerHTML = '';
+                    data.top_products.forEach(product => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `<td>${product.nom}</td><td>${product.quantite_vendue}</td>`;
+                        topProductsTbody.appendChild(tr);
+                    });
+
+                    // Remplissage du tableau Magasins Performance
+                    const magasinsTbody = document.getElementById('magasins_performance');
+                    magasinsTbody.innerHTML = '';
+                    data.magasins_performance.forEach(mag => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `<td>${mag.nom}</td><td>€ ${mag.chiffre_affaires}</td>`;
+                        magasinsTbody.appendChild(tr);
+                    });
+
+                    // Remplissage du tableau Best Employees
+                    const bestEmployeesTbody = document.getElementById('best_employees');
+                    bestEmployeesTbody.innerHTML = '';
+                    data.best_employees.forEach(emp => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `<td>${emp.nom}</td><td>${emp.prenom}</td><td>${emp.ventes}</td>`;
+                        bestEmployeesTbody.appendChild(tr);
+                    });
+
+                    // Remplissage du tableau Period Analysis (Ventes par Mois)
+                    const periodAnalysisTbody = document.getElementById('period_analysis');
+                    periodAnalysisTbody.innerHTML = ''; // Réinitialiser le contenu de la table
+
+                    const currentMonth = new Date().toISOString().slice(0, 7); // Format 'YYYY-MM'
+                    const salesByMonth = data.period_analysis.sales_by_month.filter(item => item.month === currentMonth);
+
+                    salesByMonth.forEach(item => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `<td>${item.month}</td><td>€ ${item.total}</td>`;
+                        periodAnalysisTbody.appendChild(tr);
+                    });
+
+                    // Remplissage du tableau Sales by Weekday (Ventes par Jour de la Semaine)
+                    const salesByWeekdayTbody = document.getElementById('sales_by_weekday');
+                    salesByWeekdayTbody.innerHTML = '';
+
+                    const currentDate = new Date().toISOString().split('T')[0]; // Format 'YYYY-MM-DD'
+                    const salesByDay = data.period_analysis.sales_by_day.filter(item => item.day === currentDate);
+
+                    salesByDay.forEach(item => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `<td>${item.day}</td><td>€ ${item.total}</td>`;
+                        salesByWeekdayTbody.appendChild(tr);
+                    });
+
+                    // Graphique des ventes mensuelles divisées par jour de la semaine
+                    const weekdayLabels = data.period_analysis.sales_by_weekday.map(sale => sale.weekday);
+                    const weekdaySalesData = data.period_analysis.sales_by_weekday.map(sale => sale.total);
+
+                    // Création ou mise à jour du graphique
+                    const ctx = document.getElementById('salesChart').getContext('2d');
+
+                    // Vérifie si un graphique existe déjà et détruit-le si c'est une instance de Chart
+                    if (window.salesChart instanceof Chart) {
+                        window.salesChart.destroy();
+                    }
+
+                    window.salesChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: weekdayLabels,
+                            datasets: [{
+                                label: 'Ventes',
+                                data: weekdaySalesData,
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                fill: true
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            scales: {
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Jour de la Semaine'
+                                    }
+                                },
+                                y: {
+                                    title: {
+                                        display: true,
+                                        text: 'Total des Ventes'
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+
+                    // Optionally: Handle filter logic for day, week, month as needed...
+                })
+                .catch(error => console.error('Erreur lors de la récupération des données:', error));
+        }
+
+
+        window.onload = function () {
+            analyse();  // Appel de la fonction analyse
+            magasin();  // Appel de la fonction magasin
+        };
+
     </script>
 </body>
+
 </html>

@@ -6,6 +6,7 @@ from models import db
 from blueprints.products import products_bp
 from blueprints.magasins import magasins_bp
 from blueprints.users import users_bp
+from waitress import serve
 from blueprints.reception import reception_bp
 from blueprints.sales import sales_bp
 from blueprints.analyse import analyse_bp
@@ -39,4 +40,4 @@ app.register_blueprint(analyse_bp)
 
 if __name__ == '__main__':
     print("Démarrage du serveur Flask...")
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    serve(app,host='0.0.0.0', port=5000)

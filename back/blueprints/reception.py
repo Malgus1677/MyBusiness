@@ -20,6 +20,27 @@ def get_receptions():
     except SQLAlchemyError as e:
         return jsonify({'message': 'Une erreur est survenue lors de la récupération des réceptions.', 'error': str(e)}), 500
 
+@reception_bp.route('/reception/<int:magasin_id>', methods=['GET'])
+def get_receptions_by_magasin(magasin_id):
+    try:
+        # Récupérer les réceptions pour le magasin spécifié
+        receptions = Reception.query.filter_by(magasin_id=magasin_id).all()
+
+        # Si aucune réception n'est trouvée pour ce magasin
+        if not receptions:
+            return jsonify({'message': 'Aucune réception trouvée pour ce magasin.'}), 404
+
+        # Formatage des réceptions en JSON
+        return jsonify([{
+            'id': r.id,
+            'supplier': r.supplier,
+            'total': r.total_montant,
+            'date': r.date_reception.strftime('%d/%m/%Y')  # Convertir la date au format jour/mois/année
+        } for r in receptions])
+    
+    except SQLAlchemyError as e:
+        return jsonify({'message': 'Une erreur est survenue lors de la récupération des réceptions.', 'error': str(e)}), 500
+
 @reception_bp.route('/add', methods=['POST'])
 def add_reception():
     try:

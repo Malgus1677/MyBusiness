@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +9,8 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     /* Style général du body */
-    html, body {
+    html,
+    body {
       height: 100%;
       margin: 0;
       padding: 0;
@@ -17,6 +19,7 @@
       display: flex;
       flex-direction: column;
     }
+
     /* Conteneur principal */
     .content {
       margin-left: 250px;
@@ -25,11 +28,13 @@
       transition: margin-left 0.3s ease;
       overflow-y: auto;
     }
+
     /* Header */
     header {
       background-color: #343a40;
       padding: 10px 20px;
     }
+
     header a {
       color: #fff;
       font-size: 18px;
@@ -37,22 +42,34 @@
       text-decoration: none;
       font-weight: bold;
     }
+
     header a:hover {
       color: #ff6b6b;
     }
+
     /* Cartes statistiques */
     .card {
       text-align: center;
       animation: slideIn 2s ease-in-out;
     }
+
     .card-body h5 {
       font-size: 22px;
       font-weight: 600;
     }
+
     @keyframes slideIn {
-      from { opacity: 0; transform: translateX(-100px); }
-      to { opacity: 1; transform: translateX(0); }
+      from {
+        opacity: 0;
+        transform: translateX(-100px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
     }
+
     /* Bouton personnalisé */
     .btn-custom {
       background: linear-gradient(135deg, #ff3d3d, #ff6b6b);
@@ -67,43 +84,53 @@
       font-size: 16px;
       box-shadow: 0 4px 10px rgba(255, 50, 50, 0.5);
     }
+
     .btn-custom:hover {
       background: linear-gradient(135deg, #ff6b6b, #ff3d3d);
       transform: translateY(-2px);
       box-shadow: 0 6px 15px rgba(255, 50, 50, 0.7);
     }
+
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 20px;
     }
-    th, td {
+
+    th,
+    td {
       padding: 12px;
       text-align: center;
       border-bottom: 1px solid #ddd;
     }
+
     th {
       background-color: #f4f4f4;
       color: #333;
       font-weight: bold;
     }
+
     td {
       background-color: #fff;
       color: #555;
       font-size: 16px;
     }
+
     tr:hover {
       background-color: #f1f1f1;
       cursor: pointer;
     }
+
     .product-row td {
       transition: background-color 0.3s;
     }
+
     .product-row:hover td {
       background-color: #f9f9f9;
     }
   </style>
 </head>
+
 <body>
   <header id="header">
     <a href="manager_dashboard.html">Tableau de Bord</a>
@@ -112,7 +139,7 @@
   </header>
 
   <div class="container mt-4">
-    <h1 class="text-center mb-4">Tableau de Bord Administrateur</h1>
+    <h1 class="text-center mb-4">Tableau de Bord Manager</h1>
 
     <!-- Cartes statistiques -->
     <div class="row mb-4">
@@ -166,7 +193,18 @@
     <div class="card mb-4">
       <div class="card-body">
         <h5 class="card-title">Ventes Quotidiennes</h5>
-        <canvas id="dailySalesChart"></canvas>
+        <!-- Sélection du filtre -->
+        <select id="timeFilter">
+          <option value="day">Jour</option>
+          <option value="week">Semaine</option>
+          <option value="month">Mois</option>
+        </select>
+
+        <input type="date" id="datePicker" style="display: none;">
+        <input type="week" id="weekPicker" style="display: none;">
+        <input type="month" id="monthPicker" style="display: none;">
+
+        <canvas id="salesChart"></canvas>
       </div>
     </div>
 
@@ -261,13 +299,49 @@
           </div>
         </div>
       </div>
+      <!-- Indicateurs supplémentaires -->
+      <div class="row mt-4">
+        <div class="col-md-3">
+          <div class="card bg-primary text-white">
+            <div class="card-body">
+              <h5 class="card-title">Panier Moyen</h5>
+              <h2 id="panier_moyen">€ 0</h2>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card bg-danger text-white">
+            <div class="card-body">
+              <h5 class="card-title">Rotation des Stocks</h5>
+              <h2 id="rotation_des_stocks">0</h2>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card bg-warning text-dark">
+            <div class="card-body">
+              <h5 class="card-title">Délai Moyen Stockage</h5>
+              <h2 id="delai_moyen_stockage">0</h2>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card bg-success text-white">
+            <div class="card-body">
+              <h5 class="card-title">Marge Bénéficiaire</h5>
+              <h2 id="marge_beneficiaire">0%</h2>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
   </div>
 
   <script>
     // Récupération de l'ID du magasin depuis le localStorage
     const magasin = localStorage.getItem('magasin');
-    
+
     // Fonction de récupération et d'affichage des données
     function analyse() {
       fetch(`http://localhost:5000/analyse/magasin/${magasin}`)
@@ -280,7 +354,11 @@
           document.getElementById('total_sales').innerText = data.total_sales;
           document.getElementById('total_receptions').innerText = data.total_receptions;
           document.getElementById('stock_value').innerText = '€ ' + data.stock_value;
-          
+          document.getElementById('panier_moyen').innerText = '€ ' + data.additional_indicators.panier_moyen;
+          document.getElementById('rotation_des_stocks').innerText = data.additional_indicators.rotation_des_stocks;
+          document.getElementById('delai_moyen_stockage').innerText = data.additional_indicators.delai_moyen_stockage + ' jours';
+          document.getElementById('marge_beneficiaire').innerText = data.additional_indicators.marge_beneficiaire + '%';
+
           // Remplissage du tableau Top Produits
           const topProductsTbody = document.getElementById('top_products');
           topProductsTbody.innerHTML = '';
@@ -289,7 +367,7 @@
             tr.innerHTML = `<td>${product.nom}</td><td>${product.quantite_vendue}</td>`;
             topProductsTbody.appendChild(tr);
           });
-          
+
           // Remplissage du tableau Magasins Performance
           const magasinsTbody = document.getElementById('magasins_performance');
           magasinsTbody.innerHTML = '';
@@ -298,7 +376,7 @@
             tr.innerHTML = `<td>${mag.nom}</td><td>€ ${mag.chiffre_affaires}</td>`;
             magasinsTbody.appendChild(tr);
           });
-          
+
           // Remplissage du tableau Best Employees
           const bestEmployeesTbody = document.getElementById('best_employees');
           bestEmployeesTbody.innerHTML = '';
@@ -307,57 +385,226 @@
             tr.innerHTML = `<td>${emp.nom}</td><td>${emp.prenom}</td><td>${emp.ventes}</td>`;
             bestEmployeesTbody.appendChild(tr);
           });
-          
+
           // Remplissage du tableau Period Analysis (Ventes par Mois)
           const periodAnalysisTbody = document.getElementById('period_analysis');
-          periodAnalysisTbody.innerHTML = '';
-          data.period_analysis.sales_by_month.forEach(item => {
+          periodAnalysisTbody.innerHTML = ''; // Réinitialiser le contenu de la table
+
+          // Récupérer le mois et l'année actuels
+          const currentMonth = new Date().toISOString().slice(0, 7); // Format 'YYYY-MM'
+          const currentYear = new Date().getFullYear(); // Année actuelle
+
+          // Filtrer les données pour obtenir les ventes du mois actuel
+          const salesByMonth = data.period_analysis.sales_by_month.filter(item => item.month === currentMonth);
+
+          // Remplir le tableau avec les ventes du mois actuel
+          salesByMonth.forEach(item => {
             const tr = document.createElement('tr');
             tr.innerHTML = `<td>${item.month}</td><td>€ ${item.total}</td>`;
             periodAnalysisTbody.appendChild(tr);
           });
-          
-          // Remplissage du tableau Sales by Weekday
+
+          // Remplissage du tableau Sales by Weekday (Ventes par Jour de la Semaine)
           const salesByWeekdayTbody = document.getElementById('sales_by_weekday');
-          salesByWeekdayTbody.innerHTML = '';
-          data.period_analysis.sales_by_weekday.forEach(item => {
+          salesByWeekdayTbody.innerHTML = ''; // Réinitialiser le contenu de la table
+
+          // Récupérer la date du jour actuel
+          const currentDate = new Date().toISOString().split('T')[0]; // Format 'YYYY-MM-DD'
+
+          // Filtrer les données pour obtenir les ventes du jour actuel
+          const salesByDay = data.period_analysis.sales_by_day.filter(item => item.day === currentDate);
+
+          // Remplir le tableau avec les ventes du jour actuel
+          salesByDay.forEach(item => {
             const tr = document.createElement('tr');
-            tr.innerHTML = `<td>${item.weekday}</td><td>€ ${item.total}</td>`;
+            tr.innerHTML = `<td>${item.day}</td><td>€ ${item.total}</td>`;
             salesByWeekdayTbody.appendChild(tr);
           });
-          
-          // Création du graphique des ventes quotidiennes
-          const dailySalesLabels = data.daily_sales.map(sale => sale.date);
-          const dailySalesData = data.daily_sales.map(sale => sale.total);
-          
-          const ctx = document.getElementById('dailySalesChart').getContext('2d');
-          new Chart(ctx, {
-            type: 'line',
+
+
+          // Création du graphique des ventes mensuelles divisées par jour de la semaine
+          const weekdayLabels = data.period_analysis.sales_by_weekday.map(sale => sale.weekday);
+          const weekdaySalesData = data.period_analysis.sales_by_weekday.map(sale => sale.total);
+
+          function getCurrentWeek() {
+            const today = new Date();
+            const startDate = new Date(today.getFullYear(), 0, 1);
+            const days = Math.floor((today - startDate) / (24 * 60 * 60 * 1000));
+            const weekNumber = Math.ceil((days + 1) / 7);
+            return `Semaine ${weekNumber}`;
+          }
+
+          // Fonction pour obtenir le mois en cours
+          function getCurrentMonth() {
+            const today = new Date();
+            const month = today.getMonth() + 1;  // Mois de 1 à 12
+            return `${today.getFullYear()}-${month < 10 ? '0' + month : month}`;
+          }
+
+          // Récupérer la date du jour
+          function getCurrentDate() {
+            const today = new Date();
+            const date = today.toISOString().split('T')[0];  // Format YYYY-MM-DD
+            return date;
+          }
+
+          // Initialisation avec les ventes par jour
+          let currentData = data.period_analysis.sales_by_day; // Par défaut, on commence avec les ventes par jour
+
+          const ctx = document.getElementById('salesChart').getContext('2d');
+
+          // Création du graphique initial
+          let salesChart = new Chart(ctx, {
+            type: 'bar', // Type de graphique
             data: {
-              labels: dailySalesLabels,
-              datasets: [{
-                label: 'Ventes Quotidiennes',
-                data: dailySalesData,
-                backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                fill: true,
-                tension: 0.3
-              }]
+              labels: currentData.map(d => d.day),  // X-Axis : Jours (ou semaines ou mois)
+              datasets: [
+                {
+                  label: 'Ventes',
+                  data: currentData.map(d => d.total),  // Données des ventes
+                  borderColor: 'rgba(75, 192, 192, 1)',
+                  backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                  fill: true
+                }
+              ]
             },
             options: {
               responsive: true,
               scales: {
+                x: {
+                  title: {
+                    display: true,
+                    text: 'Date'
+                  }
+                },
                 y: {
-                  beginAtZero: true
+                  title: {
+                    display: true,
+                    text: 'Total des Ventes'
+                  }
                 }
               }
             }
           });
+
+          // Fonction pour mettre à jour le graphique
+          function updateChart(data, label) {
+            salesChart.data.labels = data.map(d => d[label]);  // Utilise la bonne clé pour les étiquettes
+            salesChart.data.datasets[0].data = data.map(d => d.total);
+            salesChart.update();
+          }
+
+          // Fonction pour filtrer les données par jour, semaine, ou mois
+          function filterData(filter, date) {
+            let filteredData = [];
+
+            if (filter === 'day') {
+              // Filtrer pour afficher un jour spécifique
+              filteredData = data.period_analysis.sales_by_day.filter(d => d.day === date);
+              updateChart(filteredData, 'day');
+            } else if (filter === 'week') {
+              // Récupérer la plage de dates de la semaine sélectionnée
+              const weekStr = date;  // Format: YYYY-Www (par exemple "2025-W11")
+              const year = weekStr.substring(0, 4);  // Extraire l'année (YYYY)
+              const week = weekStr.substring(6);  // Extraire la semaine (ww)
+
+              // Calculer le premier jour de la semaine (lundi)
+              const firstDayOfYear = new Date(year, 0, 1);  // 1er janvier de l'année
+              const days = (week - 1) * 7;
+              let weekStart = new Date(firstDayOfYear.setDate(firstDayOfYear.getDate() + days));
+
+              // Ajuster pour le lundi de la semaine
+              const dayOfWeek = weekStart.getDay();
+              const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;  // Si dimanche, ajuste pour lundi, sinon ajuste normalement
+              weekStart.setDate(weekStart.getDate() + diffToMonday);  // Réajuster à lundi
+
+              // Calculer la fin de la semaine (dimanche)
+              let weekEnd = new Date(weekStart);
+              weekEnd.setDate(weekStart.getDate() + 6); // Ajouter 6 jours pour obtenir le dimanche
+
+              console.log('Semaine sélectionnée:', weekStr);
+              console.log('Lundi de la semaine:', weekStart);
+              console.log('Dimanche de la semaine:', weekEnd);
+
+              const weekRange = `${weekStart.toISOString().split('T')[0]} - ${weekEnd.toISOString().split('T')[0]}`;
+
+              // Filtrer les données pour chaque jour de la semaine
+              filteredData = data.period_analysis.sales_by_day.filter(d => {
+                const day = new Date(d.day);  // La date du jour dans les données
+                return day >= weekStart && day <= weekEnd;  // Comparer la date du jour avec la plage de la semaine
+              });
+
+              console.log('Données filtrées pour la semaine:', filteredData);
+
+              // Mettre à jour le graphique avec les données filtrées
+              updateChart(filteredData, 'day');
+
+            } else if (filter === 'month') {
+              const [year, month] = date.split('-');
+              const firstDayOfMonth = new Date(year, month - 1, 1);
+              const lastDayOfMonth = new Date(year, month, 0);
+
+              filteredData = data.period_analysis.sales_by_day.filter(d => {
+                const day = new Date(d.day);
+                return day >= firstDayOfMonth && day <= lastDayOfMonth;
+              });
+
+              updateChart(filteredData, 'day');
+
+            }
+          }
+
+          // Fonction pour afficher les sélecteurs appropriés en fonction du filtre
+          document.getElementById('timeFilter').addEventListener('change', (event) => {
+            const filter = event.target.value;
+            const datePicker = document.getElementById('datePicker');
+            const weekPicker = document.getElementById('weekPicker');
+            const monthPicker = document.getElementById('monthPicker');
+
+            if (filter === 'day') {
+              datePicker.style.display = 'inline';
+              weekPicker.style.display = 'none';
+              monthPicker.style.display = 'none';
+            } else if (filter === 'week') {
+              datePicker.style.display = 'none';
+              weekPicker.style.display = 'inline';
+              monthPicker.style.display = 'none';
+            } else if (filter === 'month') {
+              datePicker.style.display = 'none';
+              weekPicker.style.display = 'none';
+              monthPicker.style.display = 'inline';
+            }
+
+            // Réinitialiser la sélection
+            datePicker.value = '';
+            weekPicker.value = '';
+            monthPicker.value = '';
+          });
+
+          // Ajouter des écouteurs d'événements pour les sélecteurs de date
+          document.getElementById('datePicker').addEventListener('change', (event) => {
+            const date = event.target.value;
+            filterData('day', date);
+          });
+
+          document.getElementById('weekPicker').addEventListener('change', (event) => {
+            const week = event.target.value;
+            filterData('week', week);
+          });
+
+          document.getElementById('monthPicker').addEventListener('change', (event) => {
+            const month = event.target.value;
+            filterData('month', month);
+          });
+
+          // Initialisation avec les ventes du jour actuel
+          filterData('day', getCurrentDate());
         })
         .catch(error => console.error('Erreur lors de la récupération des données:', error));
     }
-    
+
     window.onload = analyse;
   </script>
 </body>
+
 </html>

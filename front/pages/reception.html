@@ -324,7 +324,7 @@ reception.html
         });
 
         function afficherReceptions(){
-            fetch('http://localhost:5000/reception')
+            fetch(`http://localhost:5000/reception/reception/${magasin}`)
             .then(response => response.json())
             .then(data => {
                 console.log('Réceptions:', data);

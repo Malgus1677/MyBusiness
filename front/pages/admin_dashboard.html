@@ -347,6 +347,10 @@
     </div>
 
     <script>
+        if (role !== 'amdin') {
+            window.location.href = 'login.html'
+        }
+
         function magasin() {
             fetch('http://localhost:5000/magasins') // Remplacez l'URL avec celle de votre API pour récupérer les magasins
                 .then(response => response.json())

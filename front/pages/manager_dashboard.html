@@ -341,6 +341,11 @@
   <script>
     // Récupération de l'ID du magasin depuis le localStorage
     const magasin = localStorage.getItem('magasin');
+    const role = localStorage.getItem('role')
+
+    if(role !== 'manager' || role !== 'amdin' || !magasin){
+      window.location.href = 'login.html'
+    }
 
     // Fonction de récupération et d'affichage des données
     function analyse() {

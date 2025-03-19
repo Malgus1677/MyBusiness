@@ -69,16 +69,15 @@
 
     <script>
         // Fonction pour supprimer le jeton et rediriger
+        // Fonction pour vider le localStorage et rediriger
         function logout() {
-            localStorage.removeItem('token', data.token);
-            localStorage.removeItem('role', data.role);
-            localStorage.removeItem('username', username);
-            localStorage.removeItem('magasin', data.magasin_id);
-            window.location.href = 'login.html';   // Redirige vers la page de connexion
+            localStorage.clear(); // Vide tout le localStorage
+            window.location.href = 'login.html'; // Redirige vers la page de connexion
         }
 
         // Appeler la fonction logout lorsque la page est prête
         window.onload = logout;
+
     </script>
 </body>
 

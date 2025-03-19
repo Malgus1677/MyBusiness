@@ -1,4 +1,3 @@
-// main.js
 const { app, BrowserWindow } = require("electron");
 const path = require("path");
 const { autoUpdater } = require("electron-updater");
@@ -6,6 +5,15 @@ const axios = require("axios");
 const { spawn } = require("child_process");
 
 let mainWindow;
+let flaskProcess;
+
+// Ajouter un gestionnaire pour éviter les erreurs non capturées (comme JS Error occurred in the main process)
+process.on('uncaughtException', (error) => {
+  console.error('Erreur non capturée:', error);
+  // On ne laisse pas l'application se fermer
+  // Ne rien faire ou loguer l'erreur pour éviter le message d'Electron
+  // Exemple: console.log(error);
+});
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -19,17 +27,23 @@ function createWindow() {
 
   autoUpdater.checkForUpdatesAndNotify();
 
-  // Lancer le serveur Flask avant de vérifier l'utilisateur
-  const flaskProcess = spawn(path.resolve(__dirname, "..", "back", "dist","MyBusiness", "MyBusiness.exe"));
-  console.log(flaskProcess)
+  const pythonPath = app.isPackaged
+    ? path.join(__dirname)
+    : path.join(__dirname, "..", "back", "dist", "app.exe");
 
+  console.log("App packagée :", app.isPackaged);
+  console.log("Chemin de l'exécutable Flask :", pythonPath);
+
+  // Démarrer Flask en arrière-plan
+  flaskProcess = spawn(pythonPath);
 
   flaskProcess.stdout.on("data", (data) => {
     console.log(`Flask: ${data}`);
   });
 
+  // Ne rien faire avec les erreurs pour ne pas les afficher dans la console
   flaskProcess.stderr.on("data", (data) => {
-    console.error(`Flask Error: ${data}`);
+    // Ignore the error
   });
 
   // Attendre un court instant pour s'assurer que le serveur est démarré
@@ -42,7 +56,7 @@ function createWindow() {
       })
       .catch((error) => {
         console.error("Erreur lors de la vérification des utilisateurs :", error);
-        mainWindow.loadFile(path.join(__dirname, "pages", "index.html"));
+        mainWindow.loadFile(path.join(__dirname, "pages", "register.html"));
       });
   }, 3000);
 
@@ -78,4 +92,3 @@ app.on("activate", () => {
     createWindow();
   }
 });
-

@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, Menu } = require("electron");
 const path = require("path");
 const { autoUpdater } = require("electron-updater");
 const axios = require("axios");
@@ -19,11 +19,11 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1000,
     height: 700,
-    webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
-    },
   });
+
+  // Créer un menu vide
+  const emptyMenu = Menu.buildFromTemplate([]);
+  Menu.setApplicationMenu(emptyMenu);
 
   autoUpdater.checkForUpdatesAndNotify();
 

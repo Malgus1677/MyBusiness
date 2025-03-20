@@ -185,7 +185,7 @@
 
         </form>
         <!-- Tableau des magasins -->
-        <table class="table table-dark table-striped table-hover text-center">
+        <table id="usersTable" class="table table-dark table-striped table-hover text-center">
             <caption class="text-light">Liste des utilisateurs</caption>
             <thead class="thead-light">
                 <tr>
@@ -258,7 +258,7 @@
                         magasinsTableBody.innerHTML = `
                         <tr>
                             <td colspan="5" class="text-center" style="color: #ff6b6b; font-size: 18px; font-weight: bold;">
-                                Aucun magasin trouvé.
+                                Aucun utilisateur trouvé.
                             </td>
                         </tr>
                     `;
@@ -301,10 +301,12 @@
             if (token && token !== 'undefined') {
                 // Si le token est présent, afficher le header et le tableau des utilisateurs
                 document.getElementById('header').style.display = 'block';
+                document.getElementById('usersTable').style.display = 'block';
 
             } else {
                 // Sinon, cacher le header et le tableau
                 document.getElementById('header').style.display = 'none';
+                document.getElementById('usersTable').style.display = 'none';
 
             }
         }
@@ -357,15 +359,24 @@
                 .then(data => {
                     console.log('Réponse:', data);
                     if (data.message === 'Utilisateur ajouté avec succès') {
-                        Swal.fire('Succès', 'Utilisateur mis à jour.', 'success');
+                        Swal.fire('Succès', 'Utilisateur mis à jour.', 'success').then(() => {
+                            // Réinitialiser le formulaire
+                            document.getElementById('registerForm').reset();
 
-                        document.getElementById('registerForm').reset();
-                        document.getElementById('updateButton').style.display = 'none';
-                        document.getElementById('addbutton').style.display = 'block';
-                        afficherUsers();
+                            // Masquer le bouton de mise à jour et afficher le bouton d'ajout
+                            document.getElementById('updateButton').style.display = 'none';
+                            document.getElementById('addbutton').style.display = 'block';
+
+                            // Afficher la liste des utilisateurs
+                            afficherUsers();
+
+                            // Rediriger vers la page de connexion
+                            window.location.href = 'login.html';
+                        });
                     } else {
                         Swal.fire('Erreur', 'Échec de la mise à jour.', 'error');
                     }
+
                 })
                 .catch(error => {
                     console.error('Erreur:', error);
@@ -398,7 +409,7 @@
                 document.getElementById('magasinContainer').style.display = 'block';
                 // Si nécessaire, vous pouvez recharger les magasins pour être sûr que la liste est à jour
                 loadMagasins();
-            
+
                 document.getElementById('user').value = magasinRow.textContent.trim();
             } else {
                 document.getElementById('magasinContainer').style.display = 'none';

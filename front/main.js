@@ -22,8 +22,7 @@ function createWindow() {
   });
 
   // Créer un menu vide
-  const emptyMenu = Menu.buildFromTemplate([]);
-  Menu.setApplicationMenu(emptyMenu);
+  
 
   autoUpdater.checkForUpdatesAndNotify();
 

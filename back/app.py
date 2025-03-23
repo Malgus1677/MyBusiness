@@ -12,12 +12,13 @@ from blueprints.analyse import analyse_bp
 from flask_jwt_extended import JWTManager
 import os
 import subprocess
+import logging
 
 app = Flask(__name__)
 CORS(app)
 
 # Configuration directe de la chaîne de connexion à la base de données
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@127.0.0.1/mybussiness'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://dowi9138:W7tt-9kMd-dXP?@localhost:3306/dowi9138_mybusiness'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Configuration de JWT
@@ -33,7 +34,6 @@ migrate = Migrate(app, db)
 # Initialisation de JWT
 jwt = JWTManager(app)
 
-
 # Enregistrement des blueprints
 app.register_blueprint(products_bp)
 app.register_blueprint(magasins_bp)
@@ -41,6 +41,8 @@ app.register_blueprint(users_bp)
 app.register_blueprint(reception_bp)
 app.register_blueprint(sales_bp)
 app.register_blueprint(analyse_bp)
+
+# Vérification de la connexion à la base de données
 
 if __name__ == '__main__':
     print("Démarrage du serveur Flask...")

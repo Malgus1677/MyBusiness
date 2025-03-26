@@ -49,9 +49,6 @@ def update_product(id):
         p = Product.query.get_or_404(id)
         data = request.get_json()
 
-        # Validation des données
-        if not data.get('nom') or not isinstance(data.get('prix'), (int, float)) or not isinstance(data.get('unites_par_carton'), int):
-            return jsonify({'message': 'Invalid data. Ensure all fields are correct.'}), 400
 
         # Mise à jour des attributs
         p.nom = data.get('nom', p.nom)

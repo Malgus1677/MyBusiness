@@ -2,10 +2,10 @@ const { app, BrowserWindow, Menu } = require("electron");
 const path = require("path");
 const { autoUpdater } = require("electron-updater");
 const axios = require("axios");
-const { spawn } = require("child_process");
+
 
 let mainWindow;
-let flaskProcess;
+
 
 // Ajouter un gestionnaire pour éviter les erreurs non capturées (comme JS Error occurred in the main process)
 process.on('uncaughtException', (error) => {
@@ -21,36 +21,18 @@ function createWindow() {
     height: 700,
   });
 
-  // Créer un menu vide
+  // Supprimer le menu par défaut
+  mainWindow.setMenu(null);
   
 
   autoUpdater.checkForUpdatesAndNotify();
 
-  const pythonPath = app.isPackaged
-    ? path.join(__dirname)
-    : path.join(__dirname, "..", "back", "dist", "app.exe");
-
-  console.log("App packagée :", app.isPackaged);
-  console.log("Chemin de l'exécutable Flask :", pythonPath);
-
-  // Démarrer Flask en arrière-plan
-  flaskProcess = spawn(pythonPath);
-
-  flaskProcess.stdout.on("data", (data) => {
-    console.log(`Flask: ${data}`);
-  });
-
-  // Ne rien faire avec les erreurs pour ne pas les afficher dans la console
-  flaskProcess.stderr.on("data", (data) => {
-    // Ignore the error
-  });
 
   // Attendre un court instant pour s'assurer que le serveur est démarré
   setTimeout(() => {
     axios
-      .get("http://localhost:5000/users/check_user")
+      .get("http://69.62.111.132/mybusiness/users/check_user")
       .then((response) => {
-        console.log("Utilisateur trouvé :", response.data);
         mainWindow.loadFile(path.join(__dirname, "pages", response.data));
       })
       .catch((error) => {

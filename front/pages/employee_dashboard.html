@@ -260,7 +260,7 @@
       const query = this.value;
       if (query.length > 2) {
         try {
-          const response = await axios.post('http://localhost:5000/products/search', {
+          const response = await axios.post('http://69.62.111.132/mybusiness/products/search', {
             nom: query
           });
 
@@ -509,7 +509,7 @@
 
       console.log('Données de vente:', saleData);
 
-      fetch('http://localhost:5000/sales/add', {
+      fetch('http://69.62.111.132/mybusiness/sales/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(saleData)

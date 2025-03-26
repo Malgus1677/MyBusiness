@@ -348,12 +348,14 @@
     </div>
 
     <script>
-        if (role !== 'amdin') {
+        // Vérification du rôle de l'utilisateur
+        const role = localStorage.getItem('role');
+        if (role !== 'admin') {
             window.location.href = 'login.html'
         }
 
         function magasin() {
-            fetch('http://localhost:5000/magasins') // Remplacez l'URL avec celle de votre API pour récupérer les magasins
+            fetch('http://69.62.111.132/mybusiness/magasins/') // Remplacez l'URL avec celle de votre API pour récupérer les magasins
                 .then(response => response.json())
                 .then(magasins => {
                     const magasinSelect = document.getElementById('user'); // L'élément select
@@ -405,18 +407,16 @@
 
         // Fonction de récupération et d'affichage des données
         function analyse(magasinId = 'all') {
-            let url = `http://localhost:5000/analyse/total`; // URL par défaut pour 'all'
+            let url = `http://69.62.111.132/mybusiness/analyse/total`; // URL par défaut pour 'all'
 
             // Si magasinId est différent de 'all', on utilise l'ID du magasin dans l'URL
             if (magasinId !== 'all') {
-                url = `http://localhost:5000/analyse/magasin/${magasinId}`;
+                url = `http://69.62.111.132/mybusiness/analyse/magasin/${magasinId}`;
             }
 
             fetch(url)
                 .then(response => response.json())
                 .then(data => {
-                    console.log('Données reçues:', data);
-
                     // Mise à jour des cartes statistiques
                     document.getElementById('total_revenue').innerText = '€ ' + data.total_revenue;
                     document.getElementById('total_profit').innerText = '€ ' + data.total_profit;

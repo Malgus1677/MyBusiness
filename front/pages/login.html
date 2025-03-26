@@ -168,14 +168,14 @@
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            const response = await fetch('http://localhost:5000/users/login', {
+            const response = await fetch('http://69.62.111.132/mybusiness/users/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, password })
             });
 
             const data = await response.json();
-            console.log('data',data);
+
 
             if (response.ok) {
                 localStorage.setItem('token', data.access_token);
@@ -184,7 +184,6 @@
                 localStorage.setItem('id', data.id);
                 localStorage.setItem('magasin', data.magasin_id);
 
-                console.log('role',data.role);
                 switch (data.role) {
                     case 'admin':
                         window.location.href = 'admin_dashboard.html';

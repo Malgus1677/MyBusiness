@@ -7,3 +7,4 @@ Flask-Migrate
 waitress
 bcrypt
 pymysql
+python-dotenv

@@ -99,24 +99,28 @@
         th {
             background-color: #f4f4f4;
             /* Fond gris clair pour l'en-tête */
-            color: #333;
+            color: #fff;
             /* Texte noir pour l'en-tête */
             font-weight: bold;
         }
 
         th:hover {
-            color: #ff6b6b;
+            color: #ff3d3d;
+            /* Survol rouge pour l'en-tête */
+        }
+
+        td:hover {
+            color: #ff3d3d;
+            /* Survol rouge pour les données */
         }
 
         td {
             background-color: #fff;
             /* Fond blanc pour les données */
-            color: #555;
+            color: #fff;
             /* Couleur de texte plus sombre pour les données */
             font-size: 16px;
         }
-
-
 
         tr:hover {
             background-color: #f1f1f1;
@@ -184,9 +188,9 @@
                 l'utilisateur</button>
 
         </form>
+        <h1 class="text-center mb-4 mt-5">Liste des Utilisateurs</h1>
         <!-- Tableau des magasins -->
         <table id="usersTable" class="table table-dark table-striped table-hover text-center">
-            <caption class="text-light">Liste des utilisateurs</caption>
             <thead class="thead-light">
                 <tr>
                     <th scope="col">Nom</th>
@@ -205,9 +209,9 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-
+        const token = localStorage.getItem('token');
         function loadMagasins() {
-            fetch('http://localhost:5000/magasins') // Remplacez l'URL avec celle de votre API pour récupérer les magasins
+            fetch('http://69.62.111.132/mybusiness/magasins/') // Remplacez l'URL avec celle de votre API pour récupérer les magasins
                 .then(response => response.json())
                 .then(magasins => {
                     const magasinSelect = document.getElementById('user'); // L'élément select
@@ -246,8 +250,10 @@
         // Appel initial lors du chargement de la page
         loadMagasins();
 
+        
+
         function afficherUsers() {
-            fetch('http://localhost:5000/users')
+            fetch('http://69.62.111.132/mybusiness/users/')
                 .then(response => response.json())
                 .then(data => {
                     console.log('data', data);
@@ -284,7 +290,7 @@
                 })
                 .catch(error => {
                     console.error('Erreur:', error);
-                    Swal.fire('Erreur', 'Impossible de charger les magasins.', 'error');
+                    Swal.fire('Erreur', 'Impossible de charger les utilisateurs.', 'error');
                 });
         }
 
@@ -296,7 +302,6 @@
 
         function checkUserAuthentication() {
             var token = localStorage.getItem('token'); // Récupérer le token d'authentification
-            console.log('token', token);
 
             if (token && token !== 'undefined') {
                 // Si le token est présent, afficher le header et le tableau des utilisateurs
@@ -348,7 +353,7 @@
             };
 
             // Requête fetch pour enregistrer l'utilisateur
-            fetch('http://localhost:5000/users/register', {
+            fetch('http://69.62.111.132/mybusiness/users/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -367,11 +372,9 @@
                             document.getElementById('updateButton').style.display = 'none';
                             document.getElementById('addbutton').style.display = 'block';
 
-                            // Afficher la liste des utilisateurs
+                            // Afficher les utilisateurs
                             afficherUsers();
-
-                            // Rediriger vers la page de connexion
-                            window.location.href = 'login.html';
+                            window.location.href = 'register.html';
                         });
                     } else {
                         Swal.fire('Erreur', 'Échec de la mise à jour.', 'error');
@@ -438,7 +441,7 @@
 
                 // Vérification de tous les champs ; si le rôle est "admin", vous pouvez ne pas vérifier le magasin
                 if (nom && prenom && username && role && password && confirmPassword && ((role === 'manager' || role === 'employee') ? magasin : true)) {
-                    fetch(`http://localhost:5000/users/update/${userId}`, {
+                    fetch(`http://69.62.111.132/mybusiness/users/update/${userId}`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json'
@@ -470,6 +473,43 @@
                     Swal.fire('Erreur', 'Veuillez remplir tout les champs', 'error');
                 }
             };
+        }
+
+        function deleteUser(userId) {
+            Swal.fire({
+                title: 'Êtes-vous sûr?',
+                text: "Vous ne pourrez pas revenir en arrière!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Oui, supprimez-le!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`http://69.62.111.132/mybusiness/users/delete/${userId}`, { // Remplace "1" par l'ID de l'utilisateur à supprimer
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${token}`, // Envoi du token JWT
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                    )
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.message === 'Utilisateur supprimé avec succès') {
+                                Swal.fire('Succès', 'Utilisateur supprimé.', 'success');
+                                document.getElementById(`user-${userId}`).remove();
+                                afficherUsers();
+                            } else {
+                                Swal.fire('Erreur', 'Échec de la suppression.', 'error');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Erreur:', error);
+                            Swal.fire('Erreur', 'Une erreur est survenue.', 'error');
+                        });
+                }
+            });
         }
 
 

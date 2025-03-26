@@ -295,6 +295,7 @@ reception.html
                 <button type="button" class="btn-custom" onclick="addReception()">Ajouter la réception</button>
             </form>
         </div>
+        <h1 class="text-center mb-4 mt-5">Liste des Réceptions</h1>
         <div id="receptionFormContainer" class="container">
             <table id="selectedReceptionTable" class="table table-dark table-striped table-hover text-center">
                 <thead class="thead-light">
@@ -324,7 +325,7 @@ reception.html
         });
 
         function afficherReceptions(){
-            fetch(`http://localhost:5000/reception/reception/${magasin}`)
+            fetch(`http://69.62.111.132/mybusiness/reception/reception/${magasin}`)
             .then(response => response.json())
             .then(data => {
                 console.log('Réceptions:', data);
@@ -354,7 +355,7 @@ reception.html
             const query = event.target.value;
 
             if (query.length > 2) {
-                fetch('http://localhost:5000/products/search', {
+                fetch('http://69.62.111.132/mybusiness/products/search', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -525,7 +526,7 @@ reception.html
 
             console.log('stockData', stockData);
 
-            fetch('http://localhost:5000/reception/add', {
+            fetch('http://69.62.111.132/mybusiness/reception/add', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

@@ -1,38 +1,26 @@
 {
     "name": "gestion-magasin",
     "version": "1.0.2",
-    "description": "Application de gestion de magasin avec Electron et Flask",
+    "description": "Application de gestion de magasin avec Electron",
     "main": "front/main.js",
     "scripts": {
-        "start": "electron front",
-        "build": "electron-packager . gestion-magasin --platform=win32 --arch=x64 --out=dist/ && npm run clean",
-        "publish": "electron-builder --publish always",
-        "clean": "rimraf back/dist"
+        "start": "electron .",
+        "build": "electron-builder --win nsis",
+        "publish": "electron-builder --publish always"
     },
     "build": {
         "appId": "com.mybusiness.app",
-        "files": [
-            "front/**/*",
-            "back/**/*",
-            "static/**/*",
-            "templates/**/*",
-            {
-                "from": "back/dist/MyBusiness",
-                "to": "back/dist/MyBusiness"
-            }
-        ],
-        "extraResources": [
-            {
-                "from": "back/dist/MyBusiness/MyBusiness.exe",
-                "to": "back/dist/MyBusiness/MyBusiness.exe"
-            }
-        ],
         "productName": "MyBusiness",
-        "win": {
-            "target": "nsis"
-        },
         "directories": {
             "output": "./build"
+        },
+        "files": [
+            "front/**/*",
+            "static/**/*",
+            "templates/**/*"
+        ],
+        "win": {
+            "target": "nsis"
         },
         "publish": [
             {
@@ -45,7 +33,6 @@
     "dependencies": {
         "asar": "^3.2.0",
         "axios": "^1.7.9",
-        "child_process": "^1.0.2",
         "dotenv": "^16.4.7",
         "electron-store": "^8.1.0",
         "electron-updater": "^6.3.9"
@@ -53,7 +40,6 @@
     "devDependencies": {
         "electron": "^34.3.0",
         "electron-builder": "^25.1.8",
-        "electron-packager": "^17.1.1",
         "rimraf": "^5.0.0"
     }
 }

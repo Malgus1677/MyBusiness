@@ -31,11 +31,8 @@ def get_users():
 
 # Récupération d'un utilisateur par ID (nécessite l'authentification)
 @users_bp.route('/<int:id>', methods=['GET'])
-@jwt_required()
 def get_user(id):
-    current_user = get_jwt_identity()
-    if current_user['role'] != 'admin' and current_user['id'] != id:
-        abort(403, description="Accès interdit.")
+
     
     u = User.query.get_or_404(id)
     return jsonify({
@@ -73,12 +70,8 @@ def update_user(id):
 
 # Suppression d'un utilisateur (nécessite l'authentification)
 @users_bp.route('/delete/<int:id>', methods=['DELETE'])
-@jwt_required()
 def delete_user(id):
-    current_user = get_jwt_identity()
-    if current_user['role'] != 'admin' and current_user['id'] != id:
-        abort(403, description="Accès interdit.")
-
+    
     u = User.query.get_or_404(id)
     db.session.delete(u)
     db.session.commit()

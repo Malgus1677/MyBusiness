@@ -1,6 +1,6 @@
 {
     "name": "gestion-magasin",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "Application de gestion de magasin avec Electron et Flask",
     "main": "main.js",
     "scripts": {

@@ -21,8 +21,7 @@ function createWindow() {
     height: 700,
   });
 
-  // Supprimer le menu par défaut
-  mainWindow.setMenu(null);
+  mainWindow.setMenu(null); // Supprimer la barre de menu par défaut
   
 
   autoUpdater.checkForUpdatesAndNotify();

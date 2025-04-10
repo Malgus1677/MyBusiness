@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, abort
-from models import User, db
+from models import User, db, Magasin
 import bcrypt
 from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token
 
@@ -156,10 +156,18 @@ def login_user():
     access_token = create_access_token(identity=user.role)
     print('Access token :', access_token)
 
+    # Recupérér le nom du magasin
+    magasin = Magasin.query.get(user.magasin_id)
+    magasin_nom = magasin.nom if magasin else None
+    # Retourner le token et les informations de l'utilisateur
+
     return jsonify({
         'access_token': access_token,
         'id': user.id,
+        'nom': user.nom,
+        'prenom': user.prenom,
         'username': user.username,
         'role': user.role,
-        'magasin_id': user.magasin_id
+        'magasin_id': user.magasin_id,
+        'magasin_nom': magasin_nom if magasin else None
     }), 200

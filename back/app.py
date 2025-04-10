@@ -10,6 +10,7 @@ from blueprints.magasins import magasins_bp
 from blueprints.products import products_bp
 from blueprints.reception import reception_bp
 from blueprints.sales import sales_bp
+from blueprints.analyse import analyse_bp
 from models import db
 from flask_jwt_extended import JWTManager
 
@@ -62,6 +63,8 @@ app.register_blueprint(magasins_bp, url_prefix='/magasins')
 app.register_blueprint(products_bp, url_prefix='/products')
 app.register_blueprint(reception_bp, url_prefix='/reception')
 app.register_blueprint(sales_bp, url_prefix='/sales')
+app.register_blueprint(analyse_bp, url_prefix='/analyse')
+
 
 
 # Démarrage de l'application

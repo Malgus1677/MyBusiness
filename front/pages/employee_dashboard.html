@@ -218,7 +218,9 @@
       <thead>
         <tr>
           <th class="py-2 px-4 border">Nom</th>
-          <th class="py-2 px-4 border">Quantité</th>
+          <th class="py-2 px-4 border">Cartons</th>
+          <th class="py-2 px-4 border">Unités</th>
+          <th class="py-2 px-4 border">Quantite Total</th>
           <th class="py-2 px-4 border">Prix Vente</th>
           <th class="py-2 px-4 border">Prix Total</th>
           <th class="py-2 px-4 border">Actions</th>
@@ -229,7 +231,7 @@
 
     <!-- Total -->
     <div class="mt-4 flex justify-between items-center">
-      <span class="text-xl font-semibold">Total: <span id="totalPrice">0</span> €</span>
+      <span class="text-xl font-semibold">Total: <span id="totalPrice">0</span> FG</span>
       <button id="generatePdf" class="btn btn-primary">Générer PDF</button>
     </div>
   </div>
@@ -251,9 +253,16 @@
       window.location.href = 'login.html';
     }
     const user_id = localStorage.getItem('id');
+    const nom = localStorage.getItem('nom');
+    const prenom = localStorage.getItem('prenom');
+    console.log('nom', nom);
+    console.log('prenom', prenom);
     console.log('magasin', magasin);
     console.log('user_id', user_id);
 
+    //Récuperer le nom du magasin
+    const magasinNom = localStorage.getItem('magasin_nom');
+    console.log('magasinNom', magasinNom);
 
     // Recherche de produit
     document.getElementById('searchProduct').addEventListener('input', async function () {
@@ -278,45 +287,91 @@
 
     // Fonction pour mettre à jour la liste des produits
     function updateProductList(products) {
+      console.log('Produits:', products);
       if (products.length === 0) {
         productListElement.innerHTML = '<li>Aucun produit trouvé.</li>';
       } else {
         productListElement.innerHTML = products.map(product => `
           <li class="p-2 cursor-pointer border border-gray-200 rounded mt-1">
-            <span>${product.nom} - ${product.prix_de_vente} €</span>
-            <input type="number" id="quantity-${product.id}" class="ml-2 w-20" min="1" value="1" />
-            <button class="ml-2 btn btn-sm btn-primary" onclick="addProductToCart(${product.id}, '${product.nom}', ${product.prix_de_vente})">Ajouter</button>
+            <span>${product.nom} (x ${product.unites_par_carton}) - ${product.prix_de_vente} FG</span>
+            <div class="flex items-center mt-1">
+              <label>Cartons:</label>
+              <input type="number" id="carton-${product.id}" class="ml-2 w-16" min="0" value="0" />
+              <label class="ml-2">Unités:</label>
+              <input type="number" id="unite-${product.id}" class="ml-2 w-16" min="0" value="0" />
+              <button class="ml-2 btn btn-sm btn-primary" onclick="addProductToCart(${product.id}, '${product.nom}', ${product.prix_de_vente}, ${product.unites_par_carton}, ${product.stock})">Ajouter</button>
+            </div>
           </li>
         `).join('');
+
       }
     }
 
     // Ajouter un produit au panier
-    function addProductToCart(id, nom, prix) {
-      const quantityInput = document.getElementById(`quantity-${id}`);
-      const quantity = parseInt(quantityInput.value);
+    function addProductToCart(id, nom, prix, unitesParCarton, stock) {
+      const cartons = parseInt(document.getElementById(`carton-${id}`).value) || 0;
+      const unites = parseInt(document.getElementById(`unite-${id}`).value) || 0;
+      const quantityCarton = cartons * unitesParCarton;
+      const totalQuantity = quantityCarton + unites;
+      console.log('totalQuantity', totalQuantity);
+      console.log('cartons', cartons);
+      console.log('unites', unites);
+      console.log('unitesParCarton', unitesParCarton);
+      console.log('stock', stock);
 
-      // Ajouter le produit au tableau du panier
-      const product = {
-        id,
-        nom,
-        prix,
-        quantity,
-        totalPrice: prix * quantity
-      };
-      cart.push(product);
+      if (totalQuantity === 0) return;
+
+      // Cherche si le produit est déjà dans le panier
+      const existing = cart.find(p => p.id === id);
+
+      if (existing && existing.quantity + totalQuantity <= stock) {
+        existing.cartons += cartons;
+        existing.unites += unites;
+        existing.quantity += totalQuantity;
+        existing.totalPrice = parseFloat((existing.prix * existing.quantity).toFixed(2));
+      } else if (totalQuantity > stock || existing.quantity + totalQuantity > stock) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Erreur',
+          text: `Stock insuffisant pour ${nom}, il ne reste que ${stock} en stock.`,
+          confirmButtonText: 'OK'
+        });
+        return;
+        
+      } 
+      else {
+        cart.push({
+          id,
+          nom,
+          prix,
+          unites_par_carton: unitesParCarton,
+          cartons,
+          unites,
+          quantity: totalQuantity,
+          totalPrice: parseFloat((prix * totalQuantity).toFixed(2))
+        });
+      }
+
+      // Reset des champs
+      document.getElementById(`carton-${id}`).value = 0;
+      document.getElementById(`unite-${id}`).value = 0;
       document.getElementById('searchProduct').value = '';
+
       updateCart();
     }
+
+
 
     // Mettre à jour le tableau du panier
     function updateCart() {
       productTableElement.innerHTML = cart.map(product => `
         <tr>
           <td>${product.nom}</td>
+          <td>${product.cartons}</td>
+          <td>${product.unites}</td>
           <td>${product.quantity}</td>
-          <td>${product.prix} €</td>
-          <td>${product.totalPrice} €</td>
+          <td>${product.prix} FG</td>
+          <td>${product.totalPrice} FG</td>
           <td><button class="remove-btn" onclick="removeProductFromCart(${product.id})">Supprimer</button></td>
         </tr>
       `).join('');
@@ -331,7 +386,6 @@
     }
 
     generatePdfButton.addEventListener('click', function () {
-      // Demander à l'utilisateur la méthode de paiement via SweetAlert
       Swal.fire({
         title: 'Sélectionnez la méthode de paiement',
         input: 'radio',
@@ -354,13 +408,12 @@
           let montantEspèces = 0;
           let sommeRendue = 0;
 
-          // Si paiement en espèces, demander le montant donné par le client
           if (paiementSelectionne === "2") {
             Swal.fire({
-              title: 'Montant en liquide',
+              title: 'Montant en espèces',
               input: 'number',
               inputLabel: 'Entrez le montant que le client donne :',
-              inputPlaceholder: 'Montant en espèces',
+              inputPlaceholder: 'Montant en FG',
               inputAttributes: {
                 min: 0,
                 step: 0.01
@@ -372,21 +425,64 @@
             }).then((cashResult) => {
               if (cashResult.isConfirmed) {
                 montantEspèces = parseFloat(cashResult.value);
-                sommeRendue = montantEspèces - parseFloat(totalPriceElement.innerText);
+                const total = parseFloat(totalPriceElement.innerText);
+                const difference = montantEspèces - total;
 
-                // Générer le PDF après confirmation et envoi des données
-                generatePDF(paiementSelectionne, montantEspèces, sommeRendue);
-                sendSaleData(paiementSelectionne, montantEspèces, sommeRendue);
+                if (difference >= 0) {
+                  // Le client a donné assez → rendre la monnaie
+                  sommeRendue = difference;
+
+                  Swal.fire({
+                    icon: 'success',
+                    title: 'Paiement accepté',
+                    text: `Monnaie à rendre : ${sommeRendue.toFixed(2)} FG`,
+                    confirmButtonText: 'OK'
+                  }).then(() => {
+                    generatePDF(paiementSelectionne, montantEspèces, sommeRendue, nom, prenom);
+                    sendSaleData(paiementSelectionne, montantEspèces, sommeRendue);
+                  });
+
+                } else {
+                  // Pas assez → demander un complément
+                  const montantRestant = Math.abs(difference).toFixed(2);
+                  Swal.fire({
+                    title: 'Montant insuffisant',
+                    text: `Il manque ${montantRestant} FG. Voulez-vous compléter par carte ?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Compléter par carte',
+                    cancelButtonText: 'Annuler'
+                  }).then((complementResult) => {
+                    if (complementResult.isConfirmed) {
+                      // Paiement mixte : espèces + carte
+                      Swal.fire({
+                        icon: 'success',
+                        title: 'Paiement mixte accepté',
+                        html: `
+                      <p>Espèces : ${montantEspèces.toFixed(2)} FG</p>
+                      <p>Carte : ${montantRestant} FG</p>
+                    `,
+                        confirmButtonText: 'OK'
+                      }).then(() => {
+                        // Envoi comme "paiement mixte"
+                        generatePDF('mixte', montantEspèces, 0, nom, prenom);
+                        sendSaleData('mixte', montantEspèces, 0);
+                      });
+                    }
+                  });
+                }
               }
             });
+
           } else {
-            // Générer le PDF pour paiement par carte
-            generatePDF(paiementSelectionne);
-            sendSaleData(paiementSelectionne);
+            // Paiement par carte uniquement
+            generatePDF(paiementSelectionne, 0, 0, nom, prenom);
+            sendSaleData(paiementSelectionne, 0, 0);
           }
         }
       });
     });
+
 
     // Fonction pour générer le PDF
     function generatePDF(paiementSelectionne, montantEspèces = 0, sommeRendue = 0) {
@@ -404,7 +500,7 @@
       // Ajouter bordure supérieure
       doc.setLineWidth(0.5);
       doc.line(margin, y, 80 - margin, y); // Ligne en haut de la page
-      y += 5;
+      y += 10;
 
       // Titre de la feuille de caisse
       doc.setFont('helvetica', 'bold');
@@ -417,9 +513,9 @@
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(10);
       doc.setTextColor(51, 51, 51);
-      doc.text('Nom du magasin', margin, y); // Remplacez par le nom réel du magasin
+      doc.text(magasinNom, margin, y); // Remplacez par le nom réel du magasin
       y += lineHeight;
-      doc.text('www.magasindemade.com', margin, y); // Remplacez par le site réel du magasin
+      doc.text(`Vendeur : ${nom} ${prenom}`, margin, y); // Remplacez par le site réel du magasin
       y += lineHeight * 2;
 
       // Ajouter une ligne de séparation horizontale
@@ -429,17 +525,34 @@
 
       // Détails des produits
       cart.forEach((product, index) => {
-        doc.setFillColor(245, 245, 245); // Gris clair pour chaque produit
-        doc.rect(margin, y - 2, 80 - margin * 2, lineHeight + 2, 'F');
+        doc.setFillColor(245, 245, 245); // Fond gris clair
+        doc.rect(margin, y - 2, 80 - margin * 2, lineHeight + 2, 'F'); // Carré de fond
 
-        doc.setFontSize(10);
+        doc.setFontSize(9);
         doc.setTextColor(0, 0, 0); // Texte noir
-        doc.text(`${product.nom}`, margin + 2, y); // Nom du produit
-        doc.text(`${product.quantity} x ${product.prix} €`, 40, y); // Quantité et prix
-        doc.text(`${product.totalPrice} €`, 70, y, { align: 'right' }); // Total par produit
-        y += lineHeight + 2;
-      });
 
+        // Nom du produit
+        doc.text(`${product.nom}`, margin + 2, y);
+        y += lineHeight;
+
+        const details = [];
+        if (product.cartons > 0) details.push(`${product.cartons} carton(s)`);
+        if (product.unites > 0) details.push(`${product.unites} unité(s)`);
+
+        // Afficher la quantité de cartons et unités
+        const quantiteTexte = details.length > 0 ? details.join(' + ') : `${product.quantity} unité(s)`;
+        doc.text(quantiteTexte, margin + 2, y);
+        y += lineHeight;
+
+        // Prix unitaire
+        doc.text(`Prix unitaire: ${product.prix.toFixed(2)} FG`, margin + 2, y);
+        y += lineHeight;
+
+        // Total du produit
+        doc.text(`Total: ${product.totalPrice.toFixed(2)} FG`, margin + 2, y);
+        y += lineHeight + 5; // Espacement entre les produits
+      });
+      
       // Ajouter une ligne de séparation horizontale
       doc.setLineWidth(0.5);
       doc.line(margin, y, 80 - margin, y);
@@ -449,24 +562,26 @@
       doc.setFontSize(12);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(0, 102, 204); // Couleur bleue pour le total
-      doc.text(`Total: ${totalPriceElement.innerText} €`, margin, y);
+      doc.text(`Total: ${totalPriceElement.innerText} FG`, margin, y);
       y += lineHeight * 2;
 
-      // Informations supplémentaires
-      doc.setFontSize(10);
-      doc.setTextColor(51, 51, 51); // Texte gris pour les informations supplémentaires
-      doc.text(`TVA incluse (20%)`, margin, y); // Adapté en fonction du taux de TVA
-      y += lineHeight;
+     
 
       // Méthode de paiement
       if (paiementSelectionne === "1") {
         doc.text(`Paiement: Carte bancaire`, margin, y);
-      } else {
+      } else if (paiementSelectionne === "2") {
         doc.text(`Paiement: Espèces`, margin, y);
         y += lineHeight;
-        doc.text(`Montant donné: ${montantEspèces} €`, margin, y);
+        doc.text(`Montant donné: ${montantEspèces} FG`, margin, y);
         y += lineHeight;
-        doc.text(`Somme rendue: ${sommeRendue.toFixed(2)} €`, margin, y);
+        doc.text(`Somme rendue: ${sommeRendue.toFixed(2)} FG`, margin, y);
+      } else {
+        doc.text(`Paiement: Espèces + carte`, margin, y);
+        y += lineHeight;
+        doc.text(`Espèces: ${montantEspèces} FG`, margin, y);
+        y += lineHeight;
+        doc.text(`Carte: ${sommeRendue.toFixed(2)} FG`, margin, y);
       }
       y += lineHeight * 2;
 
@@ -492,15 +607,15 @@
     // Fonction pour envoyer les données au back-end
     function sendSaleData(paiementSelectionne, montantEspèces = 0, sommeRendue = 0) {
       const saleData = {
-        magasin_id: magasin,  
+        magasin_id: magasin,
         products: cart.map(product => ({
-          id: product.id,  
+          id: product.id,
           nom: product.nom,
           quantity: product.quantity,
           prix: product.prix,
           totalPrice: product.totalPrice
         })),
-        user_id: user_id,  
+        user_id: user_id,
         totalPrice: parseFloat(totalPriceElement.innerText),
         paymentMethod: paiementSelectionne === "1" ? 'Carte bancaire' : 'Espèces',
         montantDonne: paiementSelectionne === "1" ? parseFloat(totalPriceElement.innerText) : montantEspèces,

@@ -269,7 +269,7 @@ reception.html
                     <thead class="thead-light">
                         <tr>
                             <th class="col">Nom du produit</th>
-                            <th class="col">Quantité</th>
+                            <th class="col">Quantité (cartons)</th>
                             <th class="col">Prix</th>
                             <th class="col">Total
                             </th>
@@ -281,7 +281,7 @@ reception.html
                 </table>
                 <div class="form-group">
                     <label for="total" class="form-label">Total</label>
-                    <input type="text" id="total" class="form-control" value="0 €" disabled>
+                    <input type="text" id="total" class="form-control" value="0 FG" disabled>
                 </div>
 
 
@@ -331,12 +331,19 @@ reception.html
                 console.log('Réceptions:', data);
                 const receptionsTable = document.getElementById('receptionsTableBody');
                 receptionsTable.innerHTML = '';
+                // si pas de données, afficher un message
+                if (data.length === 0) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td colspan="3">Aucune réception trouvée</td>`;
+                    receptionsTable.appendChild(row);
+                    return;
+                }
                 data.forEach(reception => {
                     console.log('reception', reception);
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${reception.supplier}</td>
-                        <td>${reception.total} €</td>
+                        <td>${reception.total} FG</td>
                         <td>${reception.date}</td>
                     `;
                     receptionsTable.appendChild(row);
@@ -370,7 +377,7 @@ reception.html
                             const div = document.createElement('div');
                             div.classList.add('search-result-item');
                             // Combine le nom et le prix dans le même texte
-                            div.textContent = product.nom + ' - ' + product.prix_de_vente + ' €';
+                            div.textContent = product.nom + ' - ' + product.prix_de_vente + ' FG';
                             div.addEventListener('click', function () {
                                 addProductToSelection(product);
                                 document.getElementById('searchResults').innerHTML = '';
@@ -394,9 +401,9 @@ reception.html
     <td class="col">
         <input type="number" class="quantity-input form-control" value="1" min="1" data-id="${product.id}">
     </td>
-    <td class="col">${product.prix_de_vente} €</td>
+    <td class="col">${product.prix_de_vente} FG</td>
     <td class="col">
-        <span class="total-price">${product.prix_de_vente} €</span>
+        <span class="total-price">${product.prix_de_vente} FG</span>
     </td>
     <td class="col">
         <button type="button" class="btn btn-custom btn-sm" onclick="removeProduct(${product.id})">Supprimer</button>
@@ -434,9 +441,9 @@ reception.html
             <td class="col">
                 <input type="number" class="quantity-input form-control" value="${product.quantity}" min="1" data-id="${product.id}">
             </td>
-            <td class="col">${product.prix} €</td>
+            <td class="col">${product.prix} FG</td>
             <td class="col">
-                <span class="total-price">${(product.prix * product.quantity).toFixed(2)} €</span>
+                <span class="total-price">${(product.prix * product.quantity).toFixed(2)} FG</span>
             </td>
             <td class="col">
                 <button type="button" class="btn btn-danger btn-sm" onclick="removeProduct(${product.id})">Supprimer</button>
@@ -458,7 +465,7 @@ reception.html
 
                         // Mettre à jour le total du produit dans le tableau
                         const totalPriceElement = event.target.closest('tr').querySelector('.total-price');
-                        totalPriceElement.textContent = (product.prix * quantity).toFixed(2) + ' €';
+                        totalPriceElement.textContent = (product.prix * quantity).toFixed(2) + ' FG';
                         updateTotal();
                     }
                 }
@@ -496,7 +503,7 @@ reception.html
         // Fonction pour mettre à jour l'affichage du total dans l'input
         function updateTotal() {
             const total = totalReception();
-            document.getElementById('total').value = total + ' €';
+            document.getElementById('total').value = total + ' FG';
         }
 
         // Exemple d'appel dans la console

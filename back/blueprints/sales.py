@@ -90,10 +90,6 @@ def add_sale():
         data = request.get_json()
         print(data)
         
-        # Vérifier les données requises
-        if 'magasin_id' not in data or 'products' not in data or 'totalPrice' not in data:
-            return jsonify({'message': 'Données manquantes'}), 400
-
         # Créer une nouvelle vente
         new_sale = Sales(
             magasin_id=data['magasin_id'],

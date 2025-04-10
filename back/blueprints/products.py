@@ -1,6 +1,6 @@
 # blueprints/products.py
 from flask import Blueprint, request, jsonify
-from models import Product, db
+from models import Product, db, Stock
 
 products_bp = Blueprint('products', __name__, url_prefix='/products')
 
@@ -20,12 +20,20 @@ def get_products():
 def search_products():
     data = request.get_json()
     products = Product.query.filter(Product.nom.like(f'%{data["nom"]}%')).all()
+
+    # Vérification du stock pour chaque produit
+    for product in products:
+        stock = Stock.query.filter_by(product_id=product.id).first()
+        product.stock = stock.quantite if stock else 0
+    
     return jsonify([{
         'id': p.id,
         'nom': p.nom,
-        'prix_de_vente': p.prix_de_vente,
+        'prix': p.prix,
+        'prix_de_vente': p.prix_de_vente, 
         'prix_unitaire': p.prix_unitaire,
-        'unites_par_carton': p.unites_par_carton
+        'unites_par_carton': p.unites_par_carton,
+        'stock': p.stock
     } for p in products])
 
 @products_bp.route('/<int:id>', methods=['GET'])

@@ -343,7 +343,7 @@
     const magasin = localStorage.getItem('magasin');
     const role = localStorage.getItem('role')
 
-    if(role !== 'manager' || role !== 'amdin' || !magasin){
+    if(role !== 'manager' && role !== 'amdin' && !magasin){
       window.location.href = 'login.html'
     }
 

@@ -1,11 +1,12 @@
 {
     "name": "gestion-magasin",
-    "version": "1.0.1",
+    "version": "1.0.3",
     "description": "Application de gestion de magasin avec Electron et Flask",
     "main": "main.js",
     "scripts": {
       "start": "electron .",
-      "build": "electron-packager ../front gestion-magasin --platform=win32 --arch=x64 --out=../back/dist/ && npm run copy-back-files"
+      "build": "electron-packager ../front gestion-magasin --platform=win32 --arch=x64 --out=../back/dist/ && npm run copy-back-files",
+      "publish": "electron-builder --publish always"
     },
     "build": {
       "appId": "com.mybusiness.app",

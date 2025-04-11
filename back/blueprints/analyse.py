@@ -45,11 +45,12 @@ def analyse_magasin(magasin_id):
         
         # Valeur du stock actuel pour le magasin
         stock_value = (
-            db.session.query(func.sum(Stock.quantite * Product.prix))
+            db.session.query(func.sum(Stock.quantite * Product.prix_de_vente))
             .join(Product, Product.id == Stock.product_id)
             .filter(Stock.magasin_id == magasin_id)
             .scalar() or 0
         )
+        print(stock_value)
         
         # Performances des magasins (liste de tous les magasins avec leur chiffre d'affaires)
         magasins_performance = (

@@ -10,9 +10,6 @@ let mainWindow;
 // Ajouter un gestionnaire pour éviter les erreurs non capturées (comme JS Error occurred in the main process)
 process.on('uncaughtException', (error) => {
   console.error('Erreur non capturée:', error);
-  // On ne laisse pas l'application se fermer
-  // Ne rien faire ou loguer l'erreur pour éviter le message d'Electron
-  // Exemple: console.log(error);
 });
 
 function createWindow() {
@@ -21,7 +18,7 @@ function createWindow() {
     height: 700,
   });
 
-  mainWindow.setMenu(null); // Supprimer la barre de menu par défaut
+  
   
 
   autoUpdater.checkForUpdatesAndNotify();

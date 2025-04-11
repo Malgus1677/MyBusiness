@@ -200,13 +200,12 @@
                     `;
                 } else {
                     data.forEach(product => {
-                        console.log(product);
                         const row = document.createElement('tr');
                         row.id = `product-${product.id}`;
 
                         row.innerHTML = `
                             <td>${product.nom}</td>
-                            <td>${product.prix}</td>
+                            <td>${product.prix} 'FG'</td>
                              <td>${product.unites_par_carton}</td>
                             <td>
                                 <button class="btn btn-warning btn-sm" onclick="editproduct(${product.id})">Éditer</button>

@@ -313,11 +313,7 @@
       const unites = parseInt(document.getElementById(`unite-${id}`).value) || 0;
       const quantityCarton = cartons * unitesParCarton;
       const totalQuantity = quantityCarton + unites;
-      console.log('totalQuantity', totalQuantity);
-      console.log('cartons', cartons);
-      console.log('unites', unites);
-      console.log('unitesParCarton', unitesParCarton);
-      console.log('stock', stock);
+     
 
       if (totalQuantity === 0) return;
 
@@ -329,7 +325,7 @@
         existing.unites += unites;
         existing.quantity += totalQuantity;
         existing.totalPrice = parseFloat((existing.prix * existing.quantity).toFixed(2));
-      } else if (totalQuantity > stock || existing.quantity + totalQuantity > stock) {
+      } else if (existing && (existing.quantity + totalQuantity > stock)) {
         Swal.fire({
           icon: 'error',
           title: 'Erreur',
@@ -337,9 +333,15 @@
           confirmButtonText: 'OK'
         });
         return;
-        
-      } 
-      else {
+      } else if (!existing && totalQuantity > stock) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Erreur',
+          text: `Stock insuffisant pour ${nom}, il ne reste que ${stock} en stock.`,
+          confirmButtonText: 'OK'
+        });
+        return;
+      } else {
         cart.push({
           id,
           nom,
@@ -552,7 +554,7 @@
         doc.text(`Total: ${product.totalPrice.toFixed(2)} FG`, margin + 2, y);
         y += lineHeight + 5; // Espacement entre les produits
       });
-      
+
       // Ajouter une ligne de séparation horizontale
       doc.setLineWidth(0.5);
       doc.line(margin, y, 80 - margin, y);
@@ -565,7 +567,7 @@
       doc.text(`Total: ${totalPriceElement.innerText} FG`, margin, y);
       y += lineHeight * 2;
 
-     
+
 
       // Méthode de paiement
       if (paiementSelectionne === "1") {
@@ -600,8 +602,21 @@
       y += lineHeight * 2;
       doc.line(margin, y, 80 - margin, y);
 
-      doc.autoPrint();
-      doc.save(`feuille-caisse-${formattedDate}.pdf`);
+      // Ajouter un message de remerciement
+      doc.setFontSize(10);
+      doc.setTextColor(0, 0, 0); // Texte noir
+      doc.text('Merci pour votre achat !', margin, y + 10);
+      y += lineHeight * 4;
+
+      doc.text('Visitez-nous à nouveau !', margin, y);
+      y += lineHeight * 2;
+
+      // ouverture du PDF dans un nouvel onglet
+      const pdfData = doc.output('datauristring');
+      const pdfWindow = window.open('', '_blank');
+      pdfWindow.document.write('<iframe width="100%" height="100%" src="' + pdfData + '"></iframe>');
+      pdfWindow.document.close();
+      pdfWindow.focus();
     }
 
     // Fonction pour envoyer les données au back-end

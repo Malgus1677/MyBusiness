@@ -156,7 +156,7 @@
                 <div class="card bg-success text-white">
                     <div class="card-body">
                         <h5 class="card-title">Gains</h5>
-                        <h2 id="total_profit">FG 0</h2>
+                        <h2 id="total_profit"> 0 FG</h2>
                     </div>
                 </div>
             </div>
@@ -164,7 +164,7 @@
                 <div class="card bg-warning text-dark">
                     <div class="card-body">
                         <h5 class="card-title">Chiffre d'Affaires</h5>
-                        <h2 id="total_revenue">FG 0</h2>
+                        <h2 id="total_revenue"> 0 FG</h2>
                     </div>
                 </div>
             </div>
@@ -192,7 +192,7 @@
                 <div class="card bg-dark text-white">
                     <div class="card-body">
                         <h5 class="card-title">Valeur du Stock</h5>
-                        <h2 id="stock_value">FG 0</h2>
+                        <h2 id="stock_value"> 0 FG</h2>
                     </div>
                 </div>
             </div>
@@ -314,7 +314,7 @@
                     <div class="card bg-primary text-white">
                         <div class="card-body">
                             <h5 class="card-title">Panier Moyen</h5>
-                            <h2 id="panier_moyen">FG 0</h2>
+                            <h2 id="panier_moyen"> 0 FG</h2>
                         </div>
                     </div>
                 </div>
@@ -418,12 +418,12 @@
                 .then(response => response.json())
                 .then(data => {
                     // Mise à jour des cartes statistiques
-                    document.getElementById('total_revenue').innerText = 'FG ' + data.total_revenue;
-                    document.getElementById('total_profit').innerText = 'FG ' + data.total_profit;
+                    document.getElementById('total_revenue').innerText = data.total_revenue + 'FG ';
+                    document.getElementById('total_profit').innerText =  data.total_profit + 'FG ';
                     document.getElementById('total_sales').innerText = data.total_sales;
                     document.getElementById('total_receptions').innerText = data.total_receptions;
-                    document.getElementById('stock_value').innerText = 'FG ' + data.stock_value;
-                    document.getElementById('panier_moyen').innerText = 'FG ' + data.additional_indicators.panier_moyen;
+                    document.getElementById('stock_value').innerText = data.stock_value + 'FG ';
+                    document.getElementById('panier_moyen').innerText = data.additional_indicators.panier_moyen + 'FG ';
                     document.getElementById('rotation_des_stocks').innerText = data.additional_indicators.rotation_des_stocks;
                     document.getElementById('delai_moyen_stockage').innerText = data.additional_indicators.delai_moyen_stockage + ' jours';
                     document.getElementById('marge_beneficiaire').innerText = data.additional_indicators.marge_beneficiaire + '%';

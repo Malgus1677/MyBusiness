@@ -192,7 +192,7 @@ def analyse_tous_magasins():
         )
         
         stock_value = (
-            db.session.query(func.sum(Stock.quantite * Product.prix))
+            db.session.query(func.sum(Stock.quantite * Product.prix_de_vente))
             .join(Product, Product.id == Stock.product_id)
             .scalar() or 0
         )

@@ -109,7 +109,7 @@ def add_product():
 
         # Calcul du prix unitaire et du prix de vente
         prix_unitaire = p.prix / p.unites_par_carton
-        p.prix_de_vente = round(float(prix_unitaire) + (float(prix_unitaire) * 0.30), 2)
+        p.prix_de_vente = round(float(prix_unitaire) + (float(prix_unitaire) * 0.4), 2)
         p.prix_unitaire = prix_unitaire
 
         print(p.prix_de_vente)
